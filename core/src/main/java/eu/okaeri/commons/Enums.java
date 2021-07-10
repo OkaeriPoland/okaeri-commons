@@ -1,10 +1,12 @@
 package eu.okaeri.commons;
 
+import lombok.NonNull;
+
 import java.util.Optional;
 
 public final class Enums {
 
-    public static <E extends Enum<E>> Optional<E> matchIgnoreCase(Class<E> type, String name, E fallback) {
+    public static <E extends Enum<E>> Optional<E> matchIgnoreCase(@NonNull Class<E> type, @NonNull String name, E fallback) {
         // 1:1 match ONE=ONE
         try {
             return Optional.of(Enum.valueOf(type, name));
@@ -23,11 +25,11 @@ public final class Enums {
         return Optional.ofNullable(fallback);
     }
 
-    public static <E extends Enum<E>> Optional<E> matchIgnoreCase(Class<E> type, String name) {
+    public static <E extends Enum<E>> Optional<E> matchIgnoreCase(@NonNull Class<E> type, @NonNull String name) {
         return matchIgnoreCase(type, name, null);
     }
 
-    public <E extends Enum<E>> Optional<E> match(Class<E> type, String name, E fallback) {
+    public <E extends Enum<E>> Optional<E> match(@NonNull Class<E> type, @NonNull String name, E fallback) {
         try {
             return Optional.of(Enum.valueOf(type, name));
         } catch (IllegalArgumentException exception) {
@@ -35,11 +37,11 @@ public final class Enums {
         }
     }
 
-    public <E extends Enum<E>> Optional<E> match(Class<E> type, String name) {
+    public <E extends Enum<E>> Optional<E> match(@NonNull Class<E> type, @NonNull String name) {
         return this.match(type, name, null);
     }
 
-    public <E extends Enum<E>> boolean isValid(Class<E> type, String name) {
+    public <E extends Enum<E>> boolean isValid(@NonNull Class<E> type, @NonNull String name) {
         return this.match(type, name).isPresent();
     }
 }

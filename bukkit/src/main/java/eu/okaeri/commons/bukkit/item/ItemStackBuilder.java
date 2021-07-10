@@ -1,6 +1,7 @@
 package eu.okaeri.commons.bukkit.item;
 
 import eu.okaeri.commons.bukkit.UnsafeBukkitCommons;
+import lombok.NonNull;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -20,69 +21,63 @@ public class ItemStackBuilder {
     private ItemStackBuilder() {
     }
 
-    private ItemStackBuilder(Material material, int amount) {
-        if (material == null) throw new IllegalArgumentException("material cannot be null");
+    private ItemStackBuilder(@NonNull Material material, int amount) {
         this.itemStack = new ItemStack(material, amount);
     }
 
-    public static ItemStackBuilder of(Material material) {
+    public static ItemStackBuilder of(@NonNull Material material) {
         return new ItemStackBuilder(material, 1);
     }
 
-    public static ItemStackBuilder of(Material material, int amount) {
+    public static ItemStackBuilder of(@NonNull Material material, int amount) {
         return new ItemStackBuilder(material, amount);
     }
 
-    public static ItemStackBuilder of(ItemStack item) {
-        if (item == null) throw new IllegalArgumentException("item cannot be null");
+    public static ItemStackBuilder of(@NonNull ItemStack item) {
         return ItemStackBuilder.of(item.getType(), item.getAmount())
                 .withDurability(item.getDurability())
                 .withOwnItemMeta(item.getItemMeta());
     }
 
-    public static ItemStackBuilder ofCopy(ItemStack item) {
-        if (item == null) throw new IllegalArgumentException("item cannot be null");
+    public static ItemStackBuilder ofCopy(@NonNull ItemStack item) {
         ItemStackBuilder itemStackBuilder = new ItemStackBuilder();
         itemStackBuilder.itemStack = item.clone();
         return itemStackBuilder;
     }
 
-    public ItemStackBuilder withName(String displayName) {
+    public ItemStackBuilder withName(@NonNull String displayName) {
         return this.withNameRaw(ChatColor.translateAlternateColorCodes('&', displayName));
     }
 
-    public ItemStackBuilder withNameRaw(String displayName) {
-        if (displayName == null) throw new IllegalArgumentException("displayName cannot be null");
+    public ItemStackBuilder withNameRaw(@NonNull String displayName) {
         ItemMeta itemMeta = this.itemStack.getItemMeta();
         itemMeta.setDisplayName(displayName);
         this.itemStack.setItemMeta(itemMeta);
         return this;
     }
 
-    public ItemStackBuilder withLore(String lore) {
+    public ItemStackBuilder withLore(@NonNull String lore) {
         return this.withLore(Collections.singletonList(lore));
     }
 
-    public ItemStackBuilder withLore(List<String> lore) {
+    public ItemStackBuilder withLore(@NonNull List<String> lore) {
         return this.withLoreRaw(lore.stream()
                 .map(line -> ChatColor.translateAlternateColorCodes('&', line))
                 .collect(Collectors.toList()));
     }
 
-    public ItemStackBuilder withLoreRaw(String lore) {
+    public ItemStackBuilder withLoreRaw(@NonNull String lore) {
         return this.withLoreRaw(Collections.singletonList(lore));
     }
 
-    public ItemStackBuilder withLoreRaw(List<String> lore) {
-        if (lore == null) throw new IllegalArgumentException("lore cannot be null");
+    public ItemStackBuilder withLoreRaw(@NonNull List<String> lore) {
         ItemMeta itemMeta = this.itemStack.getItemMeta();
         itemMeta.setLore(lore);
         this.itemStack.setItemMeta(itemMeta);
         return this;
     }
 
-    public ItemStackBuilder appendLoreRaw(List<String> lore) {
-        if (lore == null) throw new IllegalArgumentException("lore cannot be null");
+    public ItemStackBuilder appendLoreRaw(@NonNull List<String> lore) {
         ItemMeta itemMeta = this.itemStack.getItemMeta();
         if (!itemMeta.hasLore()) {
             itemMeta.setLore(lore);
@@ -95,64 +90,63 @@ public class ItemStackBuilder {
         return this;
     }
 
-    public ItemStackBuilder appendLore(List<String> lore) {
+    public ItemStackBuilder appendLore(@NonNull List<String> lore) {
         return this.appendLoreRaw(lore.stream()
                 .map(line -> ChatColor.translateAlternateColorCodes('&', line))
                 .collect(Collectors.toList()));
     }
 
-    public ItemStackBuilder appendLoreRaw(String line) {
+    public ItemStackBuilder appendLoreRaw(@NonNull String line) {
         return this.appendLoreRaw(Collections.singletonList(line));
     }
 
-    public ItemStackBuilder appendLore(String line) {
+    public ItemStackBuilder appendLore(@NonNull String line) {
         return this.appendLore(Collections.singletonList(line));
     }
 
-    public ItemStackBuilder withDurability(int durability) {
+    public ItemStackBuilder withDurability(@NonNull int durability) {
         this.itemStack.setDurability((short) durability);
         return this;
     }
 
-    public ItemStackBuilder withFlag(ItemFlag itemFlag) {
-        if (itemFlag == null) throw new IllegalArgumentException("itemFlag cannot be null");
+    public ItemStackBuilder withFlag(@NonNull ItemFlag itemFlag) {
         ItemMeta itemMeta = this.itemStack.getItemMeta();
         itemMeta.addItemFlags(itemFlag);
         this.itemStack.setItemMeta(itemMeta);
         return this;
     }
 
-    public ItemStackBuilder withEnchantment(Enchantment enchantment, int level) {
-        if (enchantment == null) throw new IllegalArgumentException("enchantment cannot be null");
+    public ItemStackBuilder withEnchantment(@NonNull Enchantment enchantment, int level) {
         ItemMeta itemMeta = this.itemStack.getItemMeta();
         itemMeta.addEnchant(enchantment, level, true);
         this.itemStack.setItemMeta(itemMeta);
         return this;
     }
 
-    public ItemStackBuilder withEnchantments(Map<Enchantment, Integer> enchantments) {
-        if (enchantments == null) throw new IllegalArgumentException("enchantments cannot be null");
+    public ItemStackBuilder withEnchantments(@NonNull Map<Enchantment, Integer> enchantments) {
         ItemMeta itemMeta = this.itemStack.getItemMeta();
         enchantments.forEach((enchantment, level) -> itemMeta.addEnchant(enchantment, level, true));
         this.itemStack.setItemMeta(itemMeta);
         return this;
     }
 
-    public ItemStackBuilder withOwnItemMeta(ItemMeta itemMeta) {
-        if (itemMeta == null) throw new IllegalArgumentException("itemMeta cannot be null");
+    public ItemStackBuilder withOwnItemMeta(@NonNull ItemMeta itemMeta) {
         this.itemStack.setItemMeta(itemMeta);
         return this;
     }
 
     public ItemStackBuilder makeUnbreakable() {
+        return this.setUnbreakable(true);
+    }
+
+    public ItemStackBuilder setUnbreakable(boolean state) {
         ItemMeta itemMeta = this.itemStack.getItemMeta();
-        UnsafeBukkitCommons.setItemMetaUnbreakable(itemMeta, true);
+        UnsafeBukkitCommons.setItemMetaUnbreakable(itemMeta, state);
         this.itemStack.setItemMeta(itemMeta);
         return this;
     }
 
-    public ItemStackBuilder manipulate(ItemStackManipulator manipulator) {
-        if (manipulator == null) throw new IllegalArgumentException("manipulator cannot be null");
+    public ItemStackBuilder manipulate(@NonNull ItemStackManipulator manipulator) {
         this.itemStack = manipulator.manipulate(this.itemStack);
         return this;
     }

@@ -4,6 +4,7 @@ import eu.okaeri.commons.bukkit.item.parser.ItemStringException;
 import eu.okaeri.commons.bukkit.item.parser.part.ItemStringPart;
 import eu.okaeri.commons.bukkit.item.parser.part.ItemStringPartParser;
 import eu.okaeri.commons.bukkit.item.parser.part.ItemStringPartType;
+import lombok.NonNull;
 
 public class ItemStringDurabilityPartParser implements ItemStringPartParser<Short> {
 
@@ -13,7 +14,7 @@ public class ItemStringDurabilityPartParser implements ItemStringPartParser<Shor
     }
 
     @Override
-    public Short parse(ItemStringPart part) {
+    public Short parse(@NonNull ItemStringPart part) {
 
         Short amount;
         try {

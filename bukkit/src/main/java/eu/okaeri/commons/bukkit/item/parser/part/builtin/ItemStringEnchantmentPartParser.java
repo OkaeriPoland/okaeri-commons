@@ -6,6 +6,7 @@ import eu.okaeri.commons.bukkit.item.parser.ItemStringException;
 import eu.okaeri.commons.bukkit.item.parser.part.ItemStringPart;
 import eu.okaeri.commons.bukkit.item.parser.part.ItemStringPartParser;
 import eu.okaeri.commons.bukkit.item.parser.part.ItemStringPartType;
+import lombok.NonNull;
 
 import java.util.Optional;
 
@@ -17,7 +18,7 @@ public class ItemStringEnchantmentPartParser implements ItemStringPartParser<OEn
     }
 
     @Override
-    public OEnchantmentPair parse(ItemStringPart part) {
+    public OEnchantmentPair parse(@NonNull ItemStringPart part) {
 
         Optional<OEnchantment> enchantmentOptional = OEnchantment.match(part.getValue());
         if (!enchantmentOptional.isPresent()) {

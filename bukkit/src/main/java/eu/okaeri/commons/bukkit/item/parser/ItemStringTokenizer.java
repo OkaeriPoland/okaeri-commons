@@ -2,8 +2,12 @@ package eu.okaeri.commons.bukkit.item.parser;
 
 import eu.okaeri.commons.Enums;
 import eu.okaeri.commons.bukkit.easytype.OEnchantment;
-import eu.okaeri.commons.bukkit.item.parser.part.*;
+import eu.okaeri.commons.bukkit.item.parser.part.ItemStringPart;
+import eu.okaeri.commons.bukkit.item.parser.part.ItemStringPartParserRegistry;
+import eu.okaeri.commons.bukkit.item.parser.part.ItemStringPartType;
+import eu.okaeri.commons.bukkit.item.parser.part.ItemStringParts;
 import eu.okaeri.commons.cache.CacheMap;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
@@ -17,11 +21,11 @@ public class ItemStringTokenizer {
     private final Map<String, ItemStringParts> tokenizerCache = new CacheMap<>(1024);
     private final ItemStringPartParserRegistry partParserRegistry;
 
-    public ItemStringParts tokenize(String itemString) {
+    public ItemStringParts tokenize(@NonNull String itemString) {
         return this.tokenizerCache.computeIfAbsent(itemString, this::tokenizeUncached);
     }
 
-    private ItemStringParts tokenizeUncached(String itemString) {
+    private ItemStringParts tokenizeUncached(@NonNull String itemString) {
 
         String[] strParts = itemString.split(" ");
         List<ItemStringPart> parts = new ArrayList<>();

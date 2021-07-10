@@ -1,5 +1,6 @@
 package eu.okaeri.commons.bukkit.teleport;
 
+import lombok.NonNull;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Queue;
@@ -10,13 +11,11 @@ public class QueuedTeleportsTask implements Runnable {
     private final Plugin plugin;
     private final int teleportsPerRun;
 
-    public QueuedTeleportsTask(QueuedTeleports queuedTeleports, Plugin plugin) {
+    public QueuedTeleportsTask(@NonNull QueuedTeleports queuedTeleports, @NonNull Plugin plugin) {
         this(queuedTeleports, plugin, 1);
     }
 
-    public QueuedTeleportsTask(QueuedTeleports queuedTeleports, Plugin plugin, int teleportsPerRun) {
-        if (queuedTeleports == null) throw new IllegalArgumentException("queuedTeleports cannot be null");
-        if (plugin == null) throw new IllegalArgumentException("plugin cannot be null");
+    public QueuedTeleportsTask(@NonNull QueuedTeleports queuedTeleports, @NonNull Plugin plugin, int teleportsPerRun) {
         this.queue = queuedTeleports.getTeleportQueue();
         this.plugin = plugin;
         this.teleportsPerRun = teleportsPerRun;

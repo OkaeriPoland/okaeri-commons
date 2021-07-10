@@ -4,6 +4,7 @@ import eu.okaeri.commons.bukkit.item.parser.ItemStringException;
 import eu.okaeri.commons.bukkit.item.parser.part.ItemStringPart;
 import eu.okaeri.commons.bukkit.item.parser.part.ItemStringPartParser;
 import eu.okaeri.commons.bukkit.item.parser.part.ItemStringPartType;
+import lombok.NonNull;
 
 public class ItemStringAmountPartParser implements ItemStringPartParser<Integer> {
 
@@ -13,7 +14,7 @@ public class ItemStringAmountPartParser implements ItemStringPartParser<Integer>
     }
 
     @Override
-    public Integer parse(ItemStringPart part) {
+    public Integer parse(@NonNull ItemStringPart part) {
 
         Integer amount;
         try {

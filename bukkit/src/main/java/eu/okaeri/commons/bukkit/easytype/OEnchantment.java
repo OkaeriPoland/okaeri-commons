@@ -3,6 +3,7 @@ package eu.okaeri.commons.bukkit.easytype;
 import eu.okaeri.commons.cache.CacheMap;
 import eu.okaeri.commons.cache.Cached;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.bukkit.enchantments.Enchantment;
 
@@ -83,7 +84,7 @@ public class OEnchantment {
     private final Set<String> aliases;
     private final Supplier<Enchantment> supplier;
 
-    public OEnchantment(String name, String... aliases) {
+    public OEnchantment(@NonNull String name, @NonNull String... aliases) {
         this(name, aliases, new Supplier<Enchantment>() {
 
             private Enchantment enchantment = Enchantment.getByName(aliases[0]);
@@ -95,7 +96,7 @@ public class OEnchantment {
         });
     }
 
-    public OEnchantment(String name, String[] aliases, Supplier<Enchantment> supplier) {
+    public OEnchantment(@NonNull String name, @NonNull String[] aliases, @NonNull Supplier<Enchantment> supplier) {
         this.name = name;
         this.aliases = Stream.concat(Stream.of(name), Arrays.stream(aliases))
                 .map(alias -> alias.replace("_", ""))
@@ -116,7 +117,7 @@ public class OEnchantment {
         return ALL_ENCHANTMENTS.get();
     }
 
-    public static Optional<OEnchantment> match(String name) {
+    public static Optional<OEnchantment> match(@NonNull String name) {
 
         String simplifiedName = name
                 .replace("_", "")

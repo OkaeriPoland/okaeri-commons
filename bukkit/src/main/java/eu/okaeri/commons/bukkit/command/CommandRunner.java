@@ -1,5 +1,6 @@
 package eu.okaeri.commons.bukkit.command;
 
+import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -20,29 +21,29 @@ public class CommandRunner<T> {
     private Map<String, CommandFieldReplacer<T>> dynamicFields = new LinkedHashMap<>();
     private Plugin plugin;
 
-    public static CommandRunner<?> of(Plugin plugin) {
+    public static CommandRunner<?> of(@NonNull Plugin plugin) {
         return of(plugin, Bukkit.getConsoleSender());
     }
 
-    public static <T> CommandRunner<T> of(Plugin plugin, T target) {
+    public static <T> CommandRunner<T> of(@NonNull Plugin plugin, @NonNull T target) {
         return new CommandRunner<T>(plugin, Collections.singletonList(target));
     }
 
-    public static <T> CommandRunner<T> of(Plugin plugin, Collection<? extends T> targets) {
+    public static <T> CommandRunner<T> of(@NonNull Plugin plugin, @NonNull Collection<? extends T> targets) {
         return new CommandRunner<T>(plugin, new ArrayList<>(targets));
     }
 
-    private CommandRunner(Plugin plugin, Collection<? extends T> targets) {
+    private CommandRunner(@NonNull Plugin plugin, @NonNull Collection<? extends T> targets) {
         this.plugin = plugin;
         this.targets = targets;
     }
 
-    public CommandRunner<T> field(String name, String content) {
+    public CommandRunner<T> field(@NonNull String name, @NonNull String content) {
         this.fields.put(name, content);
         return this;
     }
 
-    public CommandRunner<T> field(String name, CommandFieldReplacer<T> fieldReplacer) {
+    public CommandRunner<T> field(@NonNull String name, @NonNull CommandFieldReplacer<T> fieldReplacer) {
         this.dynamicFields.put(name, fieldReplacer);
         return this;
     }
@@ -52,16 +53,16 @@ public class CommandRunner<T> {
         return this;
     }
 
-    public CommandRunner<T> dispatcher(CommandSender sender) {
+    public CommandRunner<T> dispatcher(@NonNull CommandSender sender) {
         this.dispatcher = sender;
         return this;
     }
 
-    public CommandRunner<T> execute(String command) {
+    public CommandRunner<T> execute(@NonNull String command) {
         return this.execute(Collections.singletonList(command));
     }
 
-    public CommandRunner<T> execute(List<String> commands) {
+    public CommandRunner<T> execute(@NonNull List<String> commands) {
 
         if (commands.isEmpty()) {
             return this;

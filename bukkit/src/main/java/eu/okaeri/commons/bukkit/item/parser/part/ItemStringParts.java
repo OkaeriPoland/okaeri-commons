@@ -2,6 +2,7 @@ package eu.okaeri.commons.bukkit.item.parser.part;
 
 import eu.okaeri.commons.bukkit.item.parser.ItemStringException;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -15,12 +16,12 @@ public class ItemStringParts implements Iterable<ItemStringPart> {
     private final List<ItemStringPart> parts;
     private final ItemStringPartParserRegistry partParserRegistry;
 
-    public ItemStringParts(List<ItemStringPart> parts, ItemStringPartParserRegistry partParserRegistry) {
+    public ItemStringParts(@NonNull List<ItemStringPart> parts, @NonNull ItemStringPartParserRegistry partParserRegistry) {
         this.parts = Collections.unmodifiableList(parts);
         this.partParserRegistry = partParserRegistry;
     }
 
-    public <T> T firstOfAsOrThrow(ItemStringPartType type, Class<T> target) {
+    public <T> T firstOfAsOrThrow(@NonNull ItemStringPartType type, @NonNull Class<T> target) {
 
         ItemStringPartParser parser = this.partParserRegistry.get(type);
         ItemStringPart part = this.firstOf(type).orElseThrow(() -> new ItemStringException("no part of type " + type));
@@ -28,13 +29,13 @@ public class ItemStringParts implements Iterable<ItemStringPart> {
         return (parser == null) ? target.cast(part.getValue()) : target.cast(parser.parse(part));
     }
 
-    public Optional<ItemStringPart> firstOf(ItemStringPartType type) {
+    public Optional<ItemStringPart> firstOf(@NonNull ItemStringPartType type) {
         return this.parts.stream()
                 .filter(part -> part.getType() == type)
                 .findFirst();
     }
 
-    public <T> Stream<T> allOfAsOrThrow(ItemStringPartType type, Class<T> target) {
+    public <T> Stream<T> allOfAsOrThrow(@NonNull ItemStringPartType type, @NonNull Class<T> target) {
 
         ItemStringPartParser parser = this.partParserRegistry.get(type);
         if (parser == null) {
@@ -46,17 +47,17 @@ public class ItemStringParts implements Iterable<ItemStringPart> {
                 .map(target::cast);
     }
 
-    public Stream<ItemStringPart> allOf(ItemStringPartType type) {
+    public Stream<ItemStringPart> allOf(@NonNull ItemStringPartType type) {
         return this.parts.stream()
                 .filter(part -> part.getType() == type);
     }
 
-    public <T> List<T> listOfAsOrThrow(ItemStringPartType type, Class<T> target) {
+    public <T> List<T> listOfAsOrThrow(@NonNull ItemStringPartType type, @NonNull Class<T> target) {
         return this.allOfAsOrThrow(type, target)
                 .collect(Collectors.toList());
     }
 
-    public List<ItemStringPart> listOf(ItemStringPartType type) {
+    public List<ItemStringPart> listOf(@NonNull ItemStringPartType type) {
         return this.allOf(type)
                 .collect(Collectors.toList());
     }

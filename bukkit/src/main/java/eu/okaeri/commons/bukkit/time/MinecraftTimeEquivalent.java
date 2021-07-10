@@ -1,5 +1,7 @@
 package eu.okaeri.commons.bukkit.time;
 
+import lombok.NonNull;
+
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
@@ -78,11 +80,11 @@ public final class MinecraftTimeEquivalent {
     public static final int HOURS_23 = 23 * 60 * 60 * 20;
     public static final int HOURS_24 = 24 * 60 * 60 * 20;
 
-    public static int ticksOf(TimeUnit timeUnit, int value) {
+    public static int ticksOf(@NonNull TimeUnit timeUnit, int value) {
         return ticksOf(timeUnit.toMillis(value));
     }
 
-    public static int ticksOf(Duration duration) {
+    public static int ticksOf(@NonNull Duration duration) {
         return ticksOf(duration.toMillis());
     }
 
