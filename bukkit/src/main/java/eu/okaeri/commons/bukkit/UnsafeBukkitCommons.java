@@ -2,6 +2,7 @@ package eu.okaeri.commons.bukkit;
 
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
@@ -30,7 +31,7 @@ public final class UnsafeBukkitCommons {
         legacy18o17 = ("v1_8_R1".equalsIgnoreCase(nmsv) || nmsv.startsWith("v1_7_"));
     }
 
-    private static Class<?> getNmsClass(String pattern) {
+    private static Class<?> getNmsClass(@NonNull String pattern) {
         try {
             return Class.forName(pattern.replace("{nms}", nmsv));
         } catch (ClassNotFoundException ignored) {
@@ -38,7 +39,7 @@ public final class UnsafeBukkitCommons {
         }
     }
 
-    private static MethodHandle getMHFrom(Class<?> clazz, String name, Class<?>... params) {
+    private static MethodHandle getMHFrom(@NonNull Class<?> clazz, @NonNull String name, @NonNull Class<?>... params) {
         try {
             Method method = clazz.getDeclaredMethod(name, params);
             method.setAccessible(true);
@@ -48,7 +49,7 @@ public final class UnsafeBukkitCommons {
         }
     }
 
-    private static MethodHandle getMHGFrom(Class<?> clazz, String name) {
+    private static MethodHandle getMHGFrom(@NonNull Class<?> clazz, @NonNull String name) {
         try {
             Field method = clazz.getDeclaredField(name);
             method.setAccessible(true);
@@ -92,7 +93,7 @@ public final class UnsafeBukkitCommons {
     // ITEMMETA: UNBREAKABLE
     //
     @SneakyThrows
-    public static void setItemMetaUnbreakable(ItemMeta itemMeta, boolean state) {
+    public static void setItemMetaUnbreakable(@NonNull ItemMeta itemMeta, boolean state) {
 
         if (ItemMetaSetUnbreakable != null) {
             ItemMetaSetUnbreakable.bindTo(itemMeta).invoke(state);
@@ -106,7 +107,7 @@ public final class UnsafeBukkitCommons {
     // LOCALE HELPERS
     //
     @SneakyThrows
-    public static String getLocaleString(Player player) {
+    public static String getLocaleString(@NonNull Player player) {
 
         if (PlayerGetLocale != null) {
             return (String) PlayerGetLocale.bindTo(player).invoke();
@@ -120,12 +121,12 @@ public final class UnsafeBukkitCommons {
     // TEXT COMPONENTS / MESSAGES
     //
     @SneakyThrows
-    public static Object toBaseComponentArray(String message) {
+    public static Object toBaseComponentArray(@NonNull String message) {
         return BCTextComponentFromLegacyText.invoke(message);
     }
 
     @SneakyThrows
-    public static void sendComponent(Player player, Object message, ChatTarget target) {
+    public static void sendComponent(@NonNull Player player, Object message, @NonNull ChatTarget target) {
 
         if ((message == null) || !player.isOnline()) {
             return;
@@ -155,7 +156,7 @@ public final class UnsafeBukkitCommons {
     }
 
     @SneakyThrows
-    public static void sendMessage(Player player, String message, ChatTarget target) {
+    public static void sendMessage(@NonNull Player player, String message, @NonNull ChatTarget target) {
 
         if ((message == null) || !player.isOnline()) {
             return;
@@ -180,7 +181,7 @@ public final class UnsafeBukkitCommons {
     }
 
     @SneakyThrows
-    private static Object createPacketComponent(String message) {
+    private static Object createPacketComponent(@NonNull String message) {
 
         if (legacy18o17) {
             return IChatBaseComponent.cast(ChatSerializer.getDeclaredMethod("a", String.class).invoke(ChatSerializer, "{\"text\": \"" + message + "\"}"));
@@ -203,7 +204,7 @@ public final class UnsafeBukkitCommons {
     // TPS
     //
     @SneakyThrows
-    public static double[] getServerTps(Server server) {
+    public static double[] getServerTps(@NonNull Server server) {
         Object minecraftServer = CraftServerGetMinecraftServer.bindTo(server).invoke();
         return (double[]) MinecraftServerRecentTps.bindTo(minecraftServer).invoke();
     }

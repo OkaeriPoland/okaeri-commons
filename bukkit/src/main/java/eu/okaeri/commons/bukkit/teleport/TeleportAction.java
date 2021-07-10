@@ -1,5 +1,6 @@
 package eu.okaeri.commons.bukkit.teleport;
 
+import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -19,7 +20,7 @@ public class TeleportAction {
     private final Location where;
     private final TeleportActionCallback callback;
 
-    public TeleportAction(Entity who, Location where, TeleportActionCallback callback) {
+    public TeleportAction(@NonNull Entity who, @NonNull Location where, TeleportActionCallback callback) {
         this.who = who;
         this.where = where;
         this.callback = callback;

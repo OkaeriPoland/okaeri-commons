@@ -1,12 +1,14 @@
 package eu.okaeri.commons.matcher;
 
+import lombok.NonNull;
+
 public class Matcher<T, R> {
 
-    public static <T> Matcher<T, Object> of(T object) {
+    public static <T> Matcher<T, Object> of(@NonNull T object) {
         return new Matcher<T, Object>(object);
     }
 
-    public static <T, R> Matcher<T, R> of(T object, Class<R> result) {
+    public static <T, R> Matcher<T, R> of(@NonNull T object, @NonNull Class<R> result) {
         return new Matcher<T, R>(object);
     }
 
@@ -19,7 +21,7 @@ public class Matcher<T, R> {
     }
 
     @SuppressWarnings("unchecked")
-    public <A> Matcher<T, A> when(MatcherCondition<T> condition, MatcherResult<A> result) {
+    public <A> Matcher<T, A> when(@NonNull MatcherCondition<T> condition, @NonNull MatcherResult<A> result) {
         if (!this.matched && condition.matches(this.value)) {
             this.matched = true;
             this.result = (R) result.fetch();
@@ -28,7 +30,7 @@ public class Matcher<T, R> {
     }
 
     @SuppressWarnings("unchecked")
-    public <A> Matcher<T, A> any(MatcherResult<A> result) {
+    public <A> Matcher<T, A> any(@NonNull MatcherResult<A> result) {
         return (Matcher<T, A>) this.when(Matcher::any, (MatcherResult<R>) result);
     }
 

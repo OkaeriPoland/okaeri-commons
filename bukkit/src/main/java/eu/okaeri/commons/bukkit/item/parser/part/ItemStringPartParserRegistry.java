@@ -3,6 +3,7 @@ package eu.okaeri.commons.bukkit.item.parser.part;
 import eu.okaeri.commons.bukkit.item.parser.part.builtin.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,11 +22,11 @@ public class ItemStringPartParserRegistry {
         this.register(new ItemStringEnchantmentPartParser());
     }
 
-    public void register(ItemStringPartParser parser) {
+    public void register(@NonNull ItemStringPartParser parser) {
         this.parsers.put(parser.getForType(), parser);
     }
 
-    public ItemStringPartParser get(ItemStringPartType type) {
+    public ItemStringPartParser get(@NonNull ItemStringPartType type) {
         return this.parsers.get(type);
     }
 }

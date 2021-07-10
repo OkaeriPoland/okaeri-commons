@@ -1,6 +1,7 @@
 package eu.okaeri.commons.bukkit.teleport;
 
 import lombok.Getter;
+import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
@@ -21,13 +22,11 @@ public final class QueuedTeleports {
         return future;
     }
 
-    public void teleport(Collection<? extends Entity> who, Location where, TeleportActionCallback callback) {
+    public void teleport(@NonNull Collection<? extends Entity> who, @NonNull Location where, TeleportActionCallback callback) {
         new ArrayList<>(who).forEach(target -> this.teleport(target, where, callback));
     }
 
-    public void teleport(Entity who, Location where, TeleportActionCallback callback) {
-        if (who == null) throw new IllegalArgumentException("who cannot be null");
-        if (where == null) throw new IllegalArgumentException("where cannot be null");
+    public void teleport(@NonNull Entity who, @NonNull Location where, TeleportActionCallback callback) {
         this.teleportQueue.add(new TeleportAction(who, where, callback));
     }
 }

@@ -5,6 +5,7 @@ import eu.okaeri.commons.bukkit.item.parser.part.ItemStringPartParser;
 import eu.okaeri.commons.bukkit.item.parser.part.ItemStringPartType;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.bukkit.ChatColor;
 
 @NoArgsConstructor
@@ -19,7 +20,7 @@ public class ItemStringNamePartParser implements ItemStringPartParser<String> {
     }
 
     @Override
-    public String parse(ItemStringPart part) {
+    public String parse(@NonNull ItemStringPart part) {
         return ChatColor.translateAlternateColorCodes('&', part.getValue())
                 .replace(this.spaceSupplement, " ");
     }
