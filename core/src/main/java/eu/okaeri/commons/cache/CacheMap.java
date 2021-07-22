@@ -11,12 +11,20 @@ public class CacheMap<K, V> implements Map<K, V> {
     private final Map<K, V> data;
 
     public CacheMap() {
-        this.data = new ConcurrentHashMap<>();
+        this(new ConcurrentHashMap<>(), false);
+    }
+
+    public CacheMap(Map<K, V> data) {
+        this(data, true);
+    }
+
+    public CacheMap(Map<K, V> data, boolean sync) {
+        this.data = sync ? Collections.synchronizedMap(data) : data;
     }
 
     @SuppressWarnings("CloneableClassWithoutClone")
     public CacheMap(int maxSize) {
-        this.data = Collections.synchronizedMap(new LinkedHashMap<K, V>((maxSize * 10) / 7, 0.7f, true) {
+        this(new LinkedHashMap<K, V>((maxSize * 10) / 7, 0.7f, true) {
             @Override
             protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
                 return this.size() > maxSize;
