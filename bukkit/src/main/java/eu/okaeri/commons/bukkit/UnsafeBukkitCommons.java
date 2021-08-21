@@ -39,7 +39,12 @@ public final class UnsafeBukkitCommons {
         }
     }
 
-    private static MethodHandle getMHFrom(@NonNull Class<?> clazz, @NonNull String name, @NonNull Class<?>... params) {
+    private static MethodHandle getMHFrom(Class<?> clazz, @NonNull String name, @NonNull Class<?>... params) {
+
+        if (clazz == null) {
+            return null;
+        }
+
         try {
             Method method = clazz.getDeclaredMethod(name, params);
             method.setAccessible(true);
@@ -49,7 +54,12 @@ public final class UnsafeBukkitCommons {
         }
     }
 
-    private static MethodHandle getMHGFrom(@NonNull Class<?> clazz, @NonNull String name) {
+    private static MethodHandle getMHGFrom(Class<?> clazz, @NonNull String name) {
+
+        if (clazz == null) {
+            return null;
+        }
+
         try {
             Field method = clazz.getDeclaredField(name);
             method.setAccessible(true);
