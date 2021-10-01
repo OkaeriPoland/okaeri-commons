@@ -94,6 +94,8 @@ public final class UnsafeBukkitCommons {
     private static MethodHandle BCChatMessageTypeValueOf = getMHFrom(BCChatMessageType, "valueOf", String.class);
     private static MethodHandle PlayerGetSpigot = getMHFrom(Player.class, "spigot");
     private static MethodHandle PlayerGetLocale = getMHFrom(Player.class, "getLocale");
+    private static MethodHandle PlayerSendTitleLegacy = getMHFrom(Player.class, "sendTitle", String.class, String.class);
+    private static MethodHandle PlayerSendTitleNew = getMHFrom(Player.class, "sendTitle", String.class, String.class, int.class, int.class, int.class);
     private static MethodHandle PlayerSpigotSendMessageBA = getMHFrom(PlayerSpigot, "sendMessage", BCBaseComponentArray);
     private static MethodHandle PlayerSpigotSendMessageTBA = getMHFrom(PlayerSpigot, "sendMessage", BCChatMessageType, BCBaseComponentArray);
     private static MethodHandle CraftServerGetMinecraftServer = getMHFrom(CraftServer, "console");
@@ -131,6 +133,22 @@ public final class UnsafeBukkitCommons {
     // TEXT COMPONENTS / MESSAGES
     //
     @SneakyThrows
+    public static void sendTitle(@NonNull Player player, @NonNull String title, @NonNull String subtitle, int fadeIn, int stay, int fadeOut) {
+
+        if (PlayerSendTitleNew != null) {
+            PlayerSendTitleNew.bindTo(player).invoke(title, subtitle, fadeIn, stay, fadeOut);
+            return;
+        }
+
+        if (PlayerSendTitleLegacy != null) {
+            PlayerSendTitleLegacy.bindTo(player).invoke(title, subtitle);
+            return;
+        }
+
+        throw new RuntimeException("Cannot find viable method to send title message");
+    }
+
+    @SneakyThrows
     public static Object toBaseComponentArray(@NonNull String message) {
         return BCTextComponentFromLegacyText.invoke(message);
     }
@@ -149,7 +167,7 @@ public final class UnsafeBukkitCommons {
         }
 
         if (!BCBaseComponentArray.isInstance(message)) {
-            throw new IllegalArgumentException("message not instance of " + BCBaseComponentArray + ": " + message);
+            throw new IllegalArgumentException("Message not instance of " + BCBaseComponentArray + ": " + message);
         }
 
         if (((target == ChatTarget.CHAT) || (target == ChatTarget.SYSTEM)) && (PlayerSpigotSendMessageBA != null)) {
@@ -162,7 +180,7 @@ public final class UnsafeBukkitCommons {
             return;
         }
 
-        throw new RuntimeException("cannot send component (" + player.getName() + ", " + target.name() + "): " + message);
+        throw new RuntimeException("Cannot send component (" + player.getName() + ", " + target.name() + "): " + message);
     }
 
     @SneakyThrows
