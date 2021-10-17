@@ -21,25 +21,25 @@ public final class UnsafeBukkitCommons {
     //
     // NMS / REFLECTIONS
     //
-    @Getter private static String nmsv;
+    @Getter private static String nmsVersion;
     private static boolean legacy18o17;
     private static MethodHandles.Lookup lookup = MethodHandles.lookup();
 
     static {
-        nmsv = Bukkit.getServer().getClass().getPackage().getName();
-        nmsv = nmsv.substring(nmsv.lastIndexOf(".") + 1);
-        legacy18o17 = ("v1_8_R1".equalsIgnoreCase(nmsv) || nmsv.startsWith("v1_7_"));
+        nmsVersion = Bukkit.getServer().getClass().getPackage().getName();
+        nmsVersion = nmsVersion.substring(nmsVersion.lastIndexOf(".") + 1);
+        legacy18o17 = ("v1_8_R1".equalsIgnoreCase(nmsVersion) || nmsVersion.startsWith("v1_7_"));
     }
 
-    private static Class<?> getNmsClass(@NonNull String pattern) {
+    public static Class<?> getNmsClass(@NonNull String pattern) {
         try {
-            return Class.forName(pattern.replace("{nms}", nmsv));
+            return Class.forName(pattern.replace("{nms}", getNmsVersion()));
         } catch (ClassNotFoundException ignored) {
             return null;
         }
     }
 
-    private static MethodHandle getMHFrom(Class<?> clazz, @NonNull String name, @NonNull Class<?>... params) {
+    public static MethodHandle getMHFrom(Class<?> clazz, @NonNull String name, @NonNull Class<?>... params) {
 
         if (clazz == null) {
             return null;
@@ -54,7 +54,7 @@ public final class UnsafeBukkitCommons {
         }
     }
 
-    private static MethodHandle getMHGFrom(Class<?> clazz, @NonNull String name) {
+    public static MethodHandle getMHGFrom(Class<?> clazz, @NonNull String name) {
 
         if (clazz == null) {
             return null;
