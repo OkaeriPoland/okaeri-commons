@@ -7,60 +7,50 @@ import java.time.Instant;
 import java.util.function.Supplier;
 
 @ToString
-@EqualsAndHashCode
-public abstract class Cached<T> implements Supplier<T> {
+@EqualsAndHashCode(callSuper = false)
+public class Cached<T> extends Lazy<T> {
 
     public static <A> Cached<A> of(@NonNull Supplier<A> supplier) {
         return of(null, supplier);
     }
 
     public static <A> Cached<A> of(Duration ttl, @NonNull Supplier<A> supplier) {
-        return new Cached<A>() {
-
-            private Instant loaded;
-
-            @Override
-            public A get() {
-
-                if (this.getValue() == null) {
-                    this.loaded = Instant.now();
-                    return this.update();
-                }
-
-                if (this.getTtl() == null) {
-                    return this.getValue();
-                }
-
-                Duration timeLived = Duration.between(this.loaded, Instant.now());
-                if (timeLived.compareTo(this.getTtl()) > 0) {
-                    this.loaded = Instant.now();
-                    return this.update();
-                }
-
-                return this.getValue();
-            }
-
-            @Override
-            public A resolve() {
-                return supplier.get();
-            }
-        };
+        return new Cached<>(ttl, supplier);
     }
 
     @Getter @Setter private Duration ttl;
-    @Getter private T value;
+
+    protected Cached(Duration ttl, @NonNull Supplier<T> supplier) {
+        super(supplier);
+        this.ttl = ttl;
+    }
 
     @Override
     public T get() {
-        return (this.value == null)
-                ? this.update()
-                : this.value;
+
+        if (this.getLastUpdated() == null) {
+            return super.get();
+        }
+
+        if (this.getTtl() == null) {
+            return this.getValue();
+        }
+
+        Duration timeLived = Duration.between(this.getLastUpdated(), Instant.now());
+        if (timeLived.compareTo(this.getTtl()) > 0) {
+            return this.update();
+        }
+
+        return this.getValue();
     }
 
     public T update() {
         this.value = this.resolve();
-        return this.value;
+        this.lastUpdated = Instant.now();
+        return this.getValue();
     }
 
-    public abstract T resolve();
+    public T resolve() {
+        return this.supplier.get();
+    }
 }
