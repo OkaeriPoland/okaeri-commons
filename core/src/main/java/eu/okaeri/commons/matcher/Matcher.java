@@ -2,6 +2,9 @@ package eu.okaeri.commons.matcher;
 
 import lombok.NonNull;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Matcher<T, R> {
 
     public static <T> Matcher<T, Object> of(@NonNull T object) {
@@ -44,6 +47,12 @@ public class Matcher<T, R> {
 
     public static <A> MatcherCondition<A> eq(A a) {
         return e -> e == a;
+    }
+
+    @SafeVarargs
+    public static <A> MatcherCondition<A> eqa(A... a) {
+        List<A> list = Arrays.asList(a);
+        return list::contains;
     }
 
     public static <A> MatcherResult<A> re(A a) {
