@@ -61,9 +61,24 @@ public final class UnsafeBukkitCommons {
         }
 
         try {
-            Field method = clazz.getDeclaredField(name);
-            method.setAccessible(true);
-            return lookup.unreflectGetter(method);
+            Field field = clazz.getDeclaredField(name);
+            field.setAccessible(true);
+            return lookup.unreflectGetter(field);
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    public static MethodHandle getMHSFrom(Class<?> clazz, @NonNull String name) {
+
+        if (clazz == null) {
+            return null;
+        }
+
+        try {
+            Field field = clazz.getDeclaredField(name);
+            field.setAccessible(true);
+            return lookup.unreflectSetter(field);
         } catch (Exception ignored) {
             return null;
         }
