@@ -26,7 +26,7 @@ package eu.okaeri.commons.range;
 import eu.okaeri.commons.Numbers;
 import eu.okaeri.commons.RandomNumbers;
 import lombok.Data;
-import lombok.NonNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
@@ -226,8 +226,9 @@ public class FloatRange {
      * @param string string to parse.
      * @return parsed range or null.
      */
-    public static FloatRange valueOf(@NonNull String string) {
-        if (string.isEmpty()) {
+    @Nullable
+    public static FloatRange valueOf(@Nullable String string) {
+        if ((string == null) || string.isEmpty()) {
             return null;
         }
         String[] nums = null;

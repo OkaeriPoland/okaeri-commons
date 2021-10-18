@@ -23,6 +23,8 @@
  */
 package eu.okaeri.commons;
 
+import lombok.NonNull;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,30 +81,30 @@ public class RomanNumeral {
         this(arabic, true);
     }
 
-    public RomanNumeral(String roman, boolean safeForm) {
+    public RomanNumeral(@NonNull String roman, boolean safeForm) {
         if (safeForm) {
             this.romanStr = roman;
         }
         this.num = toInt(roman);
     }
 
-    public RomanNumeral(String roman) {
+    public RomanNumeral(@NonNull String roman) {
         this(roman, false);
     }
 
-    public RomanNumeral add(RomanNumeral other) {
+    public RomanNumeral add(@NonNull RomanNumeral other) {
         return new RomanNumeral(this.num + other.num, false);
     }
 
-    public RomanNumeral subtract(RomanNumeral other) {
+    public RomanNumeral subtract(@NonNull RomanNumeral other) {
         return new RomanNumeral(this.num - other.num, false);
     }
 
-    public RomanNumeral multiple(RomanNumeral other) {
+    public RomanNumeral multiple(@NonNull RomanNumeral other) {
         return new RomanNumeral(this.num * other.num, false);
     }
 
-    public RomanNumeral divide(RomanNumeral other) {
+    public RomanNumeral divide(@NonNull RomanNumeral other) {
         return new RomanNumeral(this.num / other.num, false);
     }
 
@@ -152,7 +154,7 @@ public class RomanNumeral {
         return i;
     }
 
-    public static int toInt(String roman) throws NumberFormatException {
+    public static int toInt(@NonNull String roman) throws NumberFormatException {
         boolean negative = roman.startsWith("-");
         if (negative) {
             roman = roman.substring(1);
