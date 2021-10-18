@@ -26,7 +26,7 @@ package eu.okaeri.commons.range;
 import eu.okaeri.commons.Numbers;
 import eu.okaeri.commons.RandomNumbers;
 import lombok.Data;
-import lombok.NonNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
@@ -140,8 +140,9 @@ public class LongRange {
      * @param string string to parse.
      * @return parsed range or null.
      */
-    public static LongRange valueOf(@NonNull String string) {
-        if (string.isEmpty()) {
+    @Nullable
+    public static LongRange valueOf(@Nullable String string) {
+        if ((string == null) || string.isEmpty()) {
             return null;
         }
         String[] nums = null;

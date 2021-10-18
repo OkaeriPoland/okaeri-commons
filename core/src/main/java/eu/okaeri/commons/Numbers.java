@@ -1,32 +1,38 @@
 package eu.okaeri.commons;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * Hacky helper for number validation/parsing. Eat it.
  */
 public final class Numbers {
 
     @Deprecated
-    public static boolean isInteger(String text) {
+    public static boolean isInteger(@Nullable String text) {
         return isInt(text);
     }
 
-    public static boolean isInt(String text) {
+    public static boolean isInt(@Nullable String text) {
         return asInt(text) != null;
     }
 
-    public static boolean isLong(String text) {
+    public static boolean isLong(@Nullable String text) {
         return asLong(text) != null;
     }
 
-    public static boolean isDouble(String text) {
+    public static boolean isDouble(@Nullable String text) {
         return asDouble(text) != null;
     }
 
-    public static boolean isFloat(String text) {
+    public static boolean isFloat(@Nullable String text) {
         return asFloat(text) != null;
     }
 
-    public static Integer asInt(String text) {
+    @Nullable
+    public static Integer asInt(@Nullable String text) {
+        if (text == null) {
+            return null;
+        }
         try {
             return Integer.valueOf(text);
         } catch (NumberFormatException ignored) {
@@ -34,12 +40,16 @@ public final class Numbers {
         }
     }
 
-    public static int asInt(String text, int def) {
+    public static int asInt(@Nullable String text, int def) {
         Integer i = asInt(text);
         return (i == null) ? def : i;
     }
 
-    public static Long asLong(String text) {
+    @Nullable
+    public static Long asLong(@Nullable String text) {
+        if (text == null) {
+            return null;
+        }
         try {
             return Long.valueOf(text);
         } catch (NumberFormatException ignored) {
@@ -47,12 +57,16 @@ public final class Numbers {
         }
     }
 
-    public static long asLong(String text, long def) {
+    public static long asLong(@Nullable String text, long def) {
         Long value = asLong(text);
         return (value == null) ? def : value;
     }
 
-    public static Double asDouble(String text) {
+    @Nullable
+    public static Double asDouble(@Nullable String text) {
+        if (text == null) {
+            return null;
+        }
         try {
             return Double.valueOf(text);
         } catch (NumberFormatException ignored) {
@@ -60,12 +74,16 @@ public final class Numbers {
         }
     }
 
-    public static double asDouble(String text, double def) {
+    public static double asDouble(@Nullable String text, double def) {
         Double value = asDouble(text);
         return (value == null) ? def : value;
     }
 
-    public static Float asFloat(String text) {
+    @Nullable
+    public static Float asFloat(@Nullable String text) {
+        if (text == null) {
+            return null;
+        }
         try {
             return Float.valueOf(text);
         } catch (NumberFormatException ignored) {
@@ -73,7 +91,7 @@ public final class Numbers {
         }
     }
 
-    public static float asFloat(String text, float def) {
+    public static float asFloat(@Nullable String text, float def) {
         Float value = asFloat(text);
         return (value == null) ? def : value;
     }
