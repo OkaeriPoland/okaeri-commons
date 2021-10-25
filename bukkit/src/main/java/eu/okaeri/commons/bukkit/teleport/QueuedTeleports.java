@@ -1,9 +1,9 @@
 package eu.okaeri.commons.bukkit.teleport;
 
-import lombok.Getter;
-import lombok.NonNull;
+import lombok.*;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,8 +12,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Getter
+@RequiredArgsConstructor
 public final class QueuedTeleports {
 
+    private final Plugin plugin;
     private final Queue<TeleportAction> teleportQueue = new ConcurrentLinkedQueue<>();
 
     public CompletableFuture<Entity> teleport(Entity who, Location where) {
@@ -27,6 +29,6 @@ public final class QueuedTeleports {
     }
 
     public void teleport(@NonNull Entity who, @NonNull Location where, TeleportActionCallback callback) {
-        this.teleportQueue.add(new TeleportAction(who, where, callback));
+        this.teleportQueue.add(new TeleportAction(this.plugin, who, where, callback));
     }
 }
