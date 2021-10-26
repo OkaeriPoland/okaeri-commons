@@ -1,22 +1,22 @@
 package eu.okaeri.commons.classpath;
 
+import eu.okaeri.commons.cache.CacheMap;
 import eu.okaeri.commons.spliterator.EnumerationSpliterator;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
@@ -24,6 +24,7 @@ import java.util.zip.ZipEntry;
 @RequiredArgsConstructor(staticName = "of")
 public class ClasspathScanner {
 
+    private final Map<Path, List<String>> jarCache = new CacheMap<>(32);
     private final ClassLoader classLoader;
 
     public Optional<ClasspathResource> findPackage(@NonNull String packageName) {
@@ -59,11 +60,23 @@ public class ClasspathScanner {
 
             List<ClasspathResource> resources = new ArrayList<>();
             String fileName = URLDecoder.decode(packageURL.getFile(), "UTF-8");
-            URI jarUri = new URI(fileName.substring(0, fileName.indexOf("!"))); // file:/mnt/c/.../app.jar!/my/package
-            Enumeration<JarEntry> entries = new JarFile(Paths.get(jarUri).toFile()).entries();
+            Path jarPath = Paths.get(new URI(fileName.substring(0, fileName.indexOf("!"))));
 
-            return StreamSupport.stream(new EnumerationSpliterator<>(entries), false)
-                    .map(ZipEntry::getName)
+            List<String> jarEntries = this.jarCache.computeIfAbsent(jarPath, path -> {
+                try {
+                    JarFile jarFile = new JarFile(jarPath.toFile());
+                    Enumeration<JarEntry> entries = jarFile.entries();
+
+                    return StreamSupport.stream(new EnumerationSpliterator<>(entries), false)
+                            .map(ZipEntry::getName)
+                            .collect(Collectors.toList());
+                }
+                catch (IOException exception) {
+                    throw new RuntimeException("Failed to read jar", exception);
+                }
+            });
+
+            return jarEntries.stream()
                     .filter(name -> name.startsWith(packagePath + "/"))
                     .map(name -> name.substring(packagePath.length() + 1))
                     .map(name -> name.split("/")[0])
