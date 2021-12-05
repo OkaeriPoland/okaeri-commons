@@ -24,7 +24,7 @@ public class TestIndexedSet {
         Player player1 = new Player("Player1");
         Player player2 = new Player("Player2");
 
-        IndexedSet<UUID, Player> set = IndexedSet.of(Player::getId, player1, player2);
+        IndexedSet<Player, UUID> set = IndexedSet.of(Player::getId, player1, player2);
 
         assertEquals(IndexedLinkedHashSet.class, set.getClass());
         assertTrue(set.size() == 2);
@@ -38,7 +38,7 @@ public class TestIndexedSet {
         Player player1 = new Player("Player1");
         Player player2 = new Player("Player2");
 
-        IndexedSet<UUID, Player> set = IndexedSet.builder(UUID.class, Player.class)
+        IndexedSet<Player, UUID> set = IndexedSet.builder(Player.class, UUID.class)
                 .keyFunction(Player::getId)
                 .add(player1)
                 .add(player2)
@@ -56,7 +56,7 @@ public class TestIndexedSet {
         Player player1 = new Player("Player1");
         Player player2 = new Player("Player2");
 
-        IndexedSet<UUID, Player> set = IndexedSet.builder(UUID.class, Player.class)
+        IndexedSet<Player, UUID> set = IndexedSet.builder(Player.class, UUID.class)
                 .keyFunction(Player::getId)
                 .add(player1)
                 .add(player2)

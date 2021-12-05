@@ -21,10 +21,10 @@ import java.util.function.Function;
  * - {@link #add(Object)}, {@link #addAll(Collection)} methods are intended for duplicate-checked adding
  * - {@link #put(Object)}, {@link #putAll(Collection)} methods are intended to allow overrides
  *
- * @param <KT> the type of the set index (map key)
  * @param <VT> the type of the set values (map value)
+ * @param <KT> the type of the set index (map key)
  */
-public interface IndexedSet<KT, VT> extends Set<VT> {
+public interface IndexedSet<VT, KT> extends Set<VT> {
 
     /**
      * Returns the value to which the specified key is mapped, or {@code null} if this
@@ -114,23 +114,25 @@ public interface IndexedSet<KT, VT> extends Set<VT> {
      *
      * @param keyFunction the mapping function for the keys
      * @param elements the elements to be contained in set
-     * @param <KT> the type of the set index (map key)
      * @param <VT> the type of the set values (map value)
+     * @param <KT> the type of the set index (map key)
      * @return a {@link IndexedSet} containing the specified elements
      */
     @SafeVarargs
-    static <KT, VT> IndexedSet<KT, VT> of(Function<VT, KT> keyFunction, VT... elements) {
+    static <VT, KT> IndexedSet<VT, KT> of(Function<VT, KT> keyFunction, VT... elements) {
         return new IndexedLinkedHashSet<>(keyFunction, elements);
     }
 
     /**
      * Returns a builder for the {@link IndexedLinkedHashSet}.
      *
-     * @param <KT> the type of the set index (map key)
+     * @param valueType the class matching the @{code <VT>}
+     * @param keyType the class matching the @{code <KT>}
      * @param <VT> the type of the set values (map value)
+     * @param <KT> the type of the set index (map key)
      * @return an uninitialized {@link IndexedSetBuilder}
      */
-    static <KT, VT> IndexedSetBuilder<KT, VT> builder(Class<? super KT> keyType, Class<? super VT> valueType) {
-        return new IndexedSetBuilder<KT, VT>().type(IndexedLinkedHashSet.class);
+    static <VT, KT> IndexedSetBuilder<VT, KT> builder(Class<? super VT> valueType, Class<? super KT> keyType) {
+        return new IndexedSetBuilder<VT, KT>().type(IndexedLinkedHashSet.class);
     }
 }

@@ -9,10 +9,10 @@ import java.util.function.Function;
 /**
  * {@link IndexedSet} backend by {@link ConcurrentHashMap}.
  *
- * @param <KT> the type of the set index (map key)
  * @param <VT> the type of the set values (map value)
+ * @param <KT> the type of the set index (map key)
  */
-public class IndexedConcurrentHashSet<KT, VT> extends AbstractIndexedSet<KT, VT> {
+public class IndexedConcurrentHashSet<KT, VT> extends AbstractIndexedSet<VT, KT> {
 
     public IndexedConcurrentHashSet(@NonNull Function<VT, KT> keyFunction) {
         super(keyFunction, new ConcurrentHashMap<>());
@@ -23,7 +23,7 @@ public class IndexedConcurrentHashSet<KT, VT> extends AbstractIndexedSet<KT, VT>
         this.addAll(Arrays.asList(elements));
     }
 
-    public IndexedConcurrentHashSet(@NonNull AbstractIndexedSet<KT, VT> source) {
+    public IndexedConcurrentHashSet(@NonNull AbstractIndexedSet<VT, KT> source) {
         super(source.keyFunction, new ConcurrentHashMap<>());
         this.addAll(source.data.values());
     }
