@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.function.Function;
 
 @RequiredArgsConstructor
-public class AbstractIndexedSet<KT, VT> implements IndexedSet<KT, VT> {
+public class AbstractIndexedSet<VT, KT> implements IndexedSet<VT, KT> {
 
     @NonNull protected final Function<VT, KT> keyFunction;
     @NonNull protected final Map<KT, VT> data;

@@ -7,10 +7,10 @@ import java.util.Collection;
 import java.util.function.Function;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class IndexedSetBuilder<KT, VT> {
+public class IndexedSetBuilder<VT, KT> {
 
     private Class<? extends AbstractIndexedSet> type;
-    private AbstractIndexedSet<KT, VT> data;
+    private AbstractIndexedSet<VT, KT> data;
 
     /**
      * Updates the type of the target {@link IndexedSet}.
@@ -18,7 +18,7 @@ public class IndexedSetBuilder<KT, VT> {
      * @param type the type of the target set
      * @return self
      */
-    public IndexedSetBuilder<KT, VT> type(@NonNull Class<? extends AbstractIndexedSet> type) {
+    public IndexedSetBuilder<VT, KT> type(@NonNull Class<? extends AbstractIndexedSet> type) {
         this.type = type;
         return this;
     }
@@ -31,7 +31,7 @@ public class IndexedSetBuilder<KT, VT> {
      */
     @SneakyThrows
     @SuppressWarnings("unchecked")
-    public IndexedSetBuilder<KT, VT> keyFunction(@NonNull Function<VT, KT> keyFunction) {
+    public IndexedSetBuilder<VT, KT> keyFunction(@NonNull Function<VT, KT> keyFunction) {
         if (this.type == null) {
             throw new IllegalArgumentException("Specify the type before keyFunction!");
         }
@@ -66,7 +66,7 @@ public class IndexedSetBuilder<KT, VT> {
      * @return self
      * @throws IllegalArgumentException when element with the same key was already present, or keyFunction was not set
      */
-    public IndexedSetBuilder<KT, VT> add(VT value) {
+    public IndexedSetBuilder<VT, KT> add(VT value) {
         if (this.data == null) {
             throw new IllegalArgumentException("Specify the keyFunction before adding the data!");
         }
@@ -81,7 +81,7 @@ public class IndexedSetBuilder<KT, VT> {
      * @return self
      * @throws IllegalArgumentException when element with the same key was already present, or keyFunction was not set
      */
-    public final IndexedSetBuilder<KT, VT> addAll(Collection<? extends VT> values) {
+    public final IndexedSetBuilder<VT, KT> addAll(Collection<? extends VT> values) {
         if (this.data == null) {
             throw new IllegalArgumentException("Specify the keyFunction before adding the data!");
         }
@@ -94,7 +94,7 @@ public class IndexedSetBuilder<KT, VT> {
      *
      * @return resulting set
      */
-    public IndexedSet<KT, VT> build() {
+    public IndexedSet<VT, KT> build() {
         return this.data;
     }
 }

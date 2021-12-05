@@ -8,10 +8,10 @@ import java.util.function.Function;
 /**
  * {@link IndexedSet} backend by {@link LinkedHashMap}.
  *
- * @param <KT> the type of the set index (map key)
  * @param <VT> the type of the set values (map value)
+ * @param <KT> the type of the set index (map key)
  */
-public class IndexedLinkedHashSet<KT, VT> extends AbstractIndexedSet<KT, VT> {
+public class IndexedLinkedHashSet<VT, KT> extends AbstractIndexedSet<VT, KT> {
 
     public IndexedLinkedHashSet(@NonNull Function<VT, KT> keyFunction) {
         super(keyFunction, new LinkedHashMap<>());
@@ -22,7 +22,7 @@ public class IndexedLinkedHashSet<KT, VT> extends AbstractIndexedSet<KT, VT> {
         this.addAll(Arrays.asList(elements));
     }
 
-    public IndexedLinkedHashSet(@NonNull AbstractIndexedSet<KT, VT> source) {
+    public IndexedLinkedHashSet(@NonNull AbstractIndexedSet<VT, KT> source) {
         super(source.keyFunction, new LinkedHashMap<>());
         this.addAll(source.data.values());
     }
