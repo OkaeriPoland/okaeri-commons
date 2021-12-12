@@ -12,12 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestIndexedSet {
 
-    @Data
-    class Player {
-        private final UUID id = UUID.randomUUID();
-        private final String name;
-    }
-
     @Test
     public void test_indexedset_of() {
 
@@ -66,5 +60,11 @@ public class TestIndexedSet {
         assertTrue(set.size() == 2);
         assertEquals(set.get(player1.getId()), player1);
         assertEquals(set.get(player2.getId()), player2);
+    }
+
+    @Data
+    class Player {
+        private final UUID id = UUID.randomUUID();
+        private final String name;
     }
 }

@@ -1,6 +1,9 @@
 package eu.okaeri.commons.indexedset;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.SneakyThrows;
 
 import java.lang.reflect.Constructor;
 import java.util.Collection;

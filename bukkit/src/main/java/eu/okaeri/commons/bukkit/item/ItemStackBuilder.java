@@ -35,8 +35,8 @@ public class ItemStackBuilder {
 
     public static ItemStackBuilder of(@NonNull ItemStack item) {
         return ItemStackBuilder.of(item.getType(), item.getAmount())
-                .withDurability(item.getDurability())
-                .withOwnItemMeta(item.getItemMeta());
+            .withDurability(item.getDurability())
+            .withOwnItemMeta(item.getItemMeta());
     }
 
     public static ItemStackBuilder ofCopy(@NonNull ItemStack item) {
@@ -62,8 +62,8 @@ public class ItemStackBuilder {
 
     public ItemStackBuilder withLore(@NonNull List<String> lore) {
         return this.withLoreRaw(lore.stream()
-                .map(line -> ChatColor.translateAlternateColorCodes('&', line))
-                .collect(Collectors.toList()));
+            .map(line -> ChatColor.translateAlternateColorCodes('&', line))
+            .collect(Collectors.toList()));
     }
 
     public ItemStackBuilder withLoreRaw(@NonNull String lore) {
@@ -92,8 +92,8 @@ public class ItemStackBuilder {
 
     public ItemStackBuilder appendLore(@NonNull List<String> lore) {
         return this.appendLoreRaw(lore.stream()
-                .map(line -> ChatColor.translateAlternateColorCodes('&', line))
-                .collect(Collectors.toList()));
+            .map(line -> ChatColor.translateAlternateColorCodes('&', line))
+            .collect(Collectors.toList()));
     }
 
     public ItemStackBuilder appendLoreRaw(@NonNull String line) {
@@ -104,7 +104,7 @@ public class ItemStackBuilder {
         return this.appendLore(Collections.singletonList(line));
     }
 
-    public ItemStackBuilder withDurability(@NonNull int durability) {
+    public ItemStackBuilder withDurability(int durability) {
         this.itemStack.setDurability((short) durability);
         return this;
     }

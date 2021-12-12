@@ -27,6 +27,10 @@ public class ClasspathScanner {
     private final Map<Path, List<String>> jarCache = new CacheMap<>(32);
     private final ClassLoader classLoader;
 
+    private static String qualifiedName(String packageName, String name) {
+        return packageName + "." + name;
+    }
+
     public Optional<ClasspathResource> findPackage(@NonNull String packageName) {
 
         int lastDot = packageName.lastIndexOf('.');
@@ -35,15 +39,15 @@ public class ClasspathScanner {
         }
 
         return this.findResources(packageName.substring(0, lastDot))
-                .filter(resource -> resource.getType() == ClasspathResourceType.PACKAGE)
-                .filter(resource -> resource.getQualifiedName().equals(packageName))
-                .findAny();
+            .filter(resource -> resource.getType() == ClasspathResourceType.PACKAGE)
+            .filter(resource -> resource.getQualifiedName().equals(packageName))
+            .findAny();
     }
 
     public Stream<ClasspathResource> findResources(@NonNull String packageName, boolean deep) {
         return deep
-                ? this.findResources(packageName).flatMap(ClasspathResource::stream)
-                : this.findResources(packageName);
+            ? this.findResources(packageName).flatMap(ClasspathResource::stream)
+            : this.findResources(packageName);
     }
 
     @SneakyThrows
@@ -68,27 +72,26 @@ public class ClasspathScanner {
                     Enumeration<JarEntry> entries = jarFile.entries();
 
                     return StreamSupport.stream(new EnumerationSpliterator<>(entries), false)
-                            .map(ZipEntry::getName)
-                            .collect(Collectors.toList());
-                }
-                catch (IOException exception) {
+                        .map(ZipEntry::getName)
+                        .collect(Collectors.toList());
+                } catch (IOException exception) {
                     throw new RuntimeException("Failed to read jar", exception);
                 }
             });
 
             return jarEntries.stream()
-                    .filter(name -> name.startsWith(packagePath + "/"))
-                    .map(name -> name.substring(packagePath.length() + 1))
-                    .map(name -> name.split("/")[0])
-                    .distinct()
-                    .map(name -> this.resourceFromName(packageName, name));
+                .filter(name -> name.startsWith(packagePath + "/"))
+                .map(name -> name.substring(packagePath.length() + 1))
+                .map(name -> name.split("/")[0])
+                .distinct()
+                .map(name -> this.resourceFromName(packageName, name));
         }
 
         if ("file".equals(packageURL.getProtocol())) {
             return Files.list(Paths.get(packageURL.toURI()))
-                    .map(Path::getFileName)
-                    .map(Path::toString)
-                    .map(name -> this.resourceFromName(packageName, name));
+                .map(Path::getFileName)
+                .map(Path::toString)
+                .map(name -> this.resourceFromName(packageName, name));
         }
 
         throw new IllegalArgumentException("Unknown protocol: " + packageURL.getProtocol());
@@ -107,9 +110,5 @@ public class ClasspathScanner {
         }
 
         return new ClasspathResource(this, name, qualifiedName(packageName, name), ClasspathResourceType.UNKNOWN);
-    }
-
-    private static String qualifiedName(String packageName, String name) {
-        return packageName + "." + name;
     }
 }

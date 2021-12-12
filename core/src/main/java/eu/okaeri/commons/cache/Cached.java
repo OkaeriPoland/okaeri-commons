@@ -10,19 +10,19 @@ import java.util.function.Supplier;
 @EqualsAndHashCode(callSuper = false)
 public class Cached<T> extends Lazy<T> {
 
+    @Getter @Setter private Duration ttl;
+
+    protected Cached(Duration ttl, @NonNull Supplier<T> supplier) {
+        super(supplier);
+        this.ttl = ttl;
+    }
+
     public static <A> Cached<A> of(@NonNull Supplier<A> supplier) {
         return of(null, supplier);
     }
 
     public static <A> Cached<A> of(Duration ttl, @NonNull Supplier<A> supplier) {
         return new Cached<>(ttl, supplier);
-    }
-
-    @Getter @Setter private Duration ttl;
-
-    protected Cached(Duration ttl, @NonNull Supplier<T> supplier) {
-        super(supplier);
-        this.ttl = ttl;
     }
 
     @Override
