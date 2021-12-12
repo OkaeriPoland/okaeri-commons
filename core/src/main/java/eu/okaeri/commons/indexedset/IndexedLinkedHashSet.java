@@ -2,7 +2,8 @@ package eu.okaeri.commons.indexedset;
 
 import lombok.NonNull;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.function.Function;
 
 /**

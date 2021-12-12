@@ -18,6 +18,31 @@ import java.util.function.Consumer;
 @RequiredArgsConstructor
 public class TeleportAction {
 
+    private static MethodHandle paperTeleportAsync;
+    private static MethodHandle entityTeleportAsync;
+    private static String activeMethod = "";
+    private static boolean announced = false;
+
+    static {
+        try {
+            Class<?> paperLib = Class.forName("io.papermc.lib.PaperLib");
+            MethodHandles.Lookup lookup = MethodHandles.publicLookup();
+            MethodType handleType = MethodType.methodType(Entity.class, Location.class);
+            paperTeleportAsync = lookup.findStatic(paperLib, "teleportAsync", handleType);
+            activeMethod = "PaperLib#teleportAsync";
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException ignored) {
+            // try fallback 1.13+ method
+            try {
+                MethodHandles.Lookup lookup = MethodHandles.publicLookup();
+                Method teleportAsyncEntity = Entity.class.getMethod("teleportAsync", Location.class, PlayerTeleportEvent.TeleportCause.class);
+                entityTeleportAsync = lookup.unreflect(teleportAsyncEntity);
+                activeMethod = "Entity#teleportAsync";
+            } catch (NoSuchMethodException | IllegalAccessException ignored1) {
+                activeMethod = "Entity#teleport";
+            }
+        }
+    }
+
     @NonNull private final Plugin plugin;
     @NonNull private final Entity who;
     @NonNull private final Location where;
@@ -67,33 +92,5 @@ public class TeleportAction {
 
         this.who.teleport(this.where);
         consumer.accept(true);
-    }
-
-    private static MethodHandle paperTeleportAsync;
-    private static MethodHandle entityTeleportAsync;
-
-    private static String activeMethod = "";
-    private static boolean announced = false;
-
-    static {
-        try {
-            Class<?> paperLib = Class.forName("io.papermc.lib.PaperLib");
-            MethodHandles.Lookup lookup = MethodHandles.publicLookup();
-            MethodType handleType = MethodType.methodType(Entity.class, Location.class);
-            paperTeleportAsync = lookup.findStatic(paperLib, "teleportAsync", handleType);
-            activeMethod = "PaperLib#teleportAsync";
-        }
-        catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException ignored) {
-            // try fallback 1.13+ method
-            try {
-                MethodHandles.Lookup lookup = MethodHandles.publicLookup();
-                Method teleportAsyncEntity = Entity.class.getMethod("teleportAsync", Location.class, PlayerTeleportEvent.TeleportCause.class);
-                entityTeleportAsync = lookup.unreflect(teleportAsyncEntity);
-                activeMethod = "Entity#teleportAsync";
-            }
-            catch (NoSuchMethodException | IllegalAccessException ignored1) {
-                activeMethod = "Entity#teleport";
-            }
-        }
     }
 }

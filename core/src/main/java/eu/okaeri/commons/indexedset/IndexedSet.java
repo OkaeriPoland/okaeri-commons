@@ -27,6 +27,33 @@ import java.util.function.Function;
 public interface IndexedSet<VT, KT> extends Set<VT> {
 
     /**
+     * Returns a mutable {@link IndexedLinkedHashSet} containing the specified elements.
+     *
+     * @param keyFunction the mapping function for the keys
+     * @param elements    the elements to be contained in set
+     * @param <VT>        the type of the set values (map value)
+     * @param <KT>        the type of the set index (map key)
+     * @return a {@link IndexedSet} containing the specified elements
+     */
+    @SafeVarargs
+    static <VT, KT> IndexedSet<VT, KT> of(Function<VT, KT> keyFunction, VT... elements) {
+        return new IndexedLinkedHashSet<>(keyFunction, elements);
+    }
+
+    /**
+     * Returns a builder for the {@link IndexedLinkedHashSet}.
+     *
+     * @param valueType the class matching the @{code <VT>}
+     * @param keyType   the class matching the @{code <KT>}
+     * @param <VT>      the type of the set values (map value)
+     * @param <KT>      the type of the set index (map key)
+     * @return an uninitialized {@link IndexedSetBuilder}
+     */
+    static <VT, KT> IndexedSetBuilder<VT, KT> builder(Class<? super VT> valueType, Class<? super KT> keyType) {
+        return new IndexedSetBuilder<VT, KT>().type(IndexedLinkedHashSet.class);
+    }
+
+    /**
      * Returns the value to which the specified key is mapped, or {@code null} if this
      * set contains no mapping for the key.
      * <p>
@@ -108,31 +135,4 @@ public interface IndexedSet<VT, KT> extends Set<VT> {
      * @param values values to be associated to theirs keys
      */
     void putAll(Collection<? extends VT> values);
-
-    /**
-     * Returns a mutable {@link IndexedLinkedHashSet} containing the specified elements.
-     *
-     * @param keyFunction the mapping function for the keys
-     * @param elements the elements to be contained in set
-     * @param <VT> the type of the set values (map value)
-     * @param <KT> the type of the set index (map key)
-     * @return a {@link IndexedSet} containing the specified elements
-     */
-    @SafeVarargs
-    static <VT, KT> IndexedSet<VT, KT> of(Function<VT, KT> keyFunction, VT... elements) {
-        return new IndexedLinkedHashSet<>(keyFunction, elements);
-    }
-
-    /**
-     * Returns a builder for the {@link IndexedLinkedHashSet}.
-     *
-     * @param valueType the class matching the @{code <VT>}
-     * @param keyType the class matching the @{code <KT>}
-     * @param <VT> the type of the set values (map value)
-     * @param <KT> the type of the set index (map key)
-     * @return an uninitialized {@link IndexedSetBuilder}
-     */
-    static <VT, KT> IndexedSetBuilder<VT, KT> builder(Class<? super VT> valueType, Class<? super KT> keyType) {
-        return new IndexedSetBuilder<VT, KT>().type(IndexedLinkedHashSet.class);
-    }
 }
