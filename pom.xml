@@ -7,11 +7,12 @@
     <groupId>eu.okaeri</groupId>
     <artifactId>okaeri-commons</artifactId>
     <packaging>pom</packaging>
-    <version>0.2.6</version>
+    <version>0.2.7</version>
 
     <modules>
         <module>core</module>
         <module>bukkit</module>
+        <module>bukkit-holographicdisplays</module>
     </modules>
 
     <properties>
