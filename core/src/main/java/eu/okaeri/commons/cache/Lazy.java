@@ -9,7 +9,7 @@ import java.time.Instant;
 import java.util.function.Supplier;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class Lazy<T> implements Supplier<T> {
+public class Lazy<T> implements Supplier<T>, Runnable {
 
     @NonNull protected Supplier<T> supplier;
     @Getter protected Instant lastUpdated;
@@ -26,5 +26,10 @@ public class Lazy<T> implements Supplier<T> {
             this.lastUpdated = Instant.now();
         }
         return this.value;
+    }
+
+    @Override
+    public void run() {
+        this.get();
     }
 }
