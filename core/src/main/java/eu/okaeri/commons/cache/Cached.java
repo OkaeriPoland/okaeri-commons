@@ -53,4 +53,9 @@ public class Cached<T> extends Lazy<T> {
     public T resolve() {
         return this.supplier.get();
     }
+
+    @Override
+    public void run() {
+        this.update();
+    }
 }
