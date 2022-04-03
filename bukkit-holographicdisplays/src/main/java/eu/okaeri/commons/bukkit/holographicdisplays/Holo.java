@@ -8,6 +8,7 @@ import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -110,6 +111,16 @@ public class Holo {
     }
 
     public Holo update() {
+
+        if (Bukkit.isPrimaryThread()) {
+            return this.updateUnsafe();
+        }
+
+        Bukkit.getScheduler().runTask(this.plugin, this::updateUnsafe);
+        return this;
+    }
+
+    protected Holo updateUnsafe() {
 
         // no location, no hologram
         if (this.location == null) {
