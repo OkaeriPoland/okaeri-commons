@@ -29,6 +29,10 @@ public class Holo {
         return new Holo(plugin).location(location);
     }
 
+    public static Holo create(@NonNull Plugin plugin) {
+        return new Holo(plugin);
+    }
+
     public Holo location(@NonNull Location location) {
         this.location = location;
         return this;
@@ -106,6 +110,11 @@ public class Holo {
     }
 
     public Holo update() {
+
+        // no location, no hologram
+        if (this.location == null) {
+            throw new RuntimeException("Location cannot be null");
+        }
 
         // create hologram if null
         if (this.hologram == null) {
