@@ -2,6 +2,7 @@ package eu.okaeri.commons.bukkit.holographicdisplays;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import com.gmail.filoghost.holographicdisplays.api.VisibilityManager;
 import com.gmail.filoghost.holographicdisplays.api.line.HologramLine;
 import com.gmail.filoghost.holographicdisplays.api.line.ItemLine;
 import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
@@ -10,11 +11,14 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
@@ -102,6 +106,57 @@ public class Holo {
     // replace
     public Holo replaceLines(@NonNull List<HoloLine> contents) {
         return this.clear().appendLines(contents);
+    }
+
+    // visibility
+    public Holo visibilityUpdate(@NonNull Function<Player, Boolean> function) {
+
+        if (this.hologram == null) {
+            return this;
+        }
+
+        VisibilityManager visibilityManager = this.hologram.getVisibilityManager();
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (function.apply(player)) {
+                visibilityManager.showTo(player);
+            } else {
+                visibilityManager.hideTo(player);
+            }
+        }
+
+        return this;
+    }
+
+    public Holo visibilityUpdateByOwner(@NonNull Player owner, boolean hideToOwner) {
+        UUID uniqueId = owner.getUniqueId();
+        return this.visibilityUpdate(player -> {
+            // owner self visibility
+            if (player.getUniqueId().equals(uniqueId)) {
+                return !hideToOwner;
+            }
+            // other player visibility
+            return player.canSee(owner);
+        });
+    }
+
+    public Holo visibilityUpdateOnlyOwner(@NonNull Player owner) {
+        UUID uniqueId = owner.getUniqueId();
+        return this.visibilityUpdate(player -> player.getUniqueId().equals(uniqueId));
+    }
+
+    public Holo visibilityHideTo(@NonNull Player player) {
+        if (this.hologram != null) {
+            this.hologram.getVisibilityManager().hideTo(player);
+        }
+        return this;
+    }
+
+    public Holo visibilityShowTo(@NonNull Player player) {
+        if (this.hologram != null) {
+            this.hologram.getVisibilityManager().showTo(player);
+        }
+        return this;
     }
 
     // other
