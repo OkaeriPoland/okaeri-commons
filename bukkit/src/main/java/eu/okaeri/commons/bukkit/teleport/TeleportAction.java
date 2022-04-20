@@ -76,7 +76,9 @@ public class TeleportAction {
 
         if (paperTeleportAsync != null) {
             try {
-                ((CompletableFuture<Boolean>) paperTeleportAsync.invoke(this.who, this.where)).thenAccept(consumer);
+                ((CompletableFuture<Boolean>) paperTeleportAsync
+                    .invoke(this.who, this.where))
+                    .thenAccept(consumer);
                 return;
             } catch (Throwable ignored) {
             }
@@ -84,7 +86,9 @@ public class TeleportAction {
 
         if (entityTeleportAsync != null) {
             try {
-                entityTeleportAsync.bindTo(this.who).invoke(this.where, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                ((CompletableFuture<Boolean>) entityTeleportAsync.bindTo(this.who)
+                    .invoke(this.where, PlayerTeleportEvent.TeleportCause.PLUGIN))
+                    .thenAccept(consumer);
                 return;
             } catch (Throwable ignored) {
             }
