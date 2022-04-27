@@ -21,11 +21,24 @@ public final class MinecraftTimeEquivalent {
     }
 
     public static int ticksOf(@NonNull Duration duration) {
-        return ticksOf(duration.toMillis());
+        return ticksOf(duration, false);
+    }
+
+    public static int ticksOf(@NonNull Duration duration, boolean failsafe) {
+        return ticksOf(duration.toMillis(), failsafe);
     }
 
     public static int ticksOf(long millis) {
-        if (millis < 50) throw new IllegalArgumentException("cannot transform " + millis + " ms to ticks, too low value");
+        return ticksOf(millis, false);
+    }
+
+    public static int ticksOf(long millis, boolean failsafe) {
+        if (millis < 50) {
+            if (failsafe) {
+                return 1;
+            }
+            throw new IllegalArgumentException("cannot transform " + millis + " ms to ticks, too low value");
+        }
         return Math.toIntExact(millis / 50L);
     }
 }
