@@ -33,12 +33,18 @@ public final class MinecraftTimeEquivalent {
     }
 
     public static int ticksOf(long millis, boolean failsafe) {
+
+        if (millis == 0) {
+            return 0;
+        }
+
         if (millis < 50) {
             if (failsafe) {
                 return 1;
             }
             throw new IllegalArgumentException("cannot transform " + millis + " ms to ticks, too low value");
         }
+
         return Math.toIntExact(millis / 50L);
     }
 }
