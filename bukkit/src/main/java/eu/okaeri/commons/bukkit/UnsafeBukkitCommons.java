@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -97,6 +98,7 @@ public final class UnsafeBukkitCommons {
     private static Class<?> BCBaseComponentArray = getNmsClass("[Lnet.md_5.bungee.api.chat.BaseComponent;");
     private static Class<?> BCBaseComponent = getNmsClass("net.md_5.bungee.api.chat.BaseComponent");
     private static Class<?> PlayerSpigot = getNmsClass("org.bukkit.entity.Player$Spigot");
+    private static Class<?> CommandSenderSpigot = getNmsClass("org.bukkit.command.CommandSender$Spigot");
     private static Class<?> MinecraftServer = getNmsClass("net.minecraft.server.{nms}.MinecraftServer");
     private static Class<?> CraftServer = getNmsClass("org.bukkit.craftbukkit.{nms}.CraftServer");
 
@@ -113,6 +115,8 @@ public final class UnsafeBukkitCommons {
     private static MethodHandle PlayerSendTitleNew = getMHFrom(Player.class, "sendTitle", String.class, String.class, int.class, int.class, int.class);
     private static MethodHandle PlayerSpigotSendMessageBA = getMHFrom(PlayerSpigot, "sendMessage", BCBaseComponentArray);
     private static MethodHandle PlayerSpigotSendMessageTBA = getMHFrom(PlayerSpigot, "sendMessage", BCChatMessageType, BCBaseComponentArray);
+    private static MethodHandle CommandSenderGetSpigot = getMHFrom(CommandSender.class, "spigot");
+    private static MethodHandle CommandSenderSpigotSendMessageBA = getMHFrom(CommandSenderSpigot, "sendMessage", BCBaseComponentArray);
     private static MethodHandle CraftServerGetMinecraftServer = getMHFrom(CraftServer, "console");
     private static MethodHandle MinecraftServerRecentTps = getMHFrom(MinecraftServer, "recentTps");
 
@@ -166,6 +170,31 @@ public final class UnsafeBukkitCommons {
     @SneakyThrows
     public static Object toBaseComponentArray(@NonNull String message) {
         return BCTextComponentFromLegacyText.invoke(message);
+    }
+
+    @SneakyThrows
+    public static void sendComponent(@NonNull CommandSender sender, Object message) {
+
+        if (message == null) {
+            return;
+        }
+
+        if (BCBaseComponent.isInstance(message)) {
+            Object[] arr = (Object[]) Array.newInstance(BCBaseComponent, 1);
+            arr[0] = message;
+            message = arr;
+        }
+
+        if (!BCBaseComponentArray.isInstance(message)) {
+            throw new IllegalArgumentException("Message not instance of " + BCBaseComponentArray + ": " + message);
+        }
+
+        if (CommandSenderSpigotSendMessageBA != null) {
+            CommandSenderSpigotSendMessageBA.bindTo(CommandSenderGetSpigot.invoke(sender)).invoke(message);
+            return;
+        }
+
+        throw new RuntimeException("Cannot send component (" + sender.getName() + "): " + message);
     }
 
     @SneakyThrows
