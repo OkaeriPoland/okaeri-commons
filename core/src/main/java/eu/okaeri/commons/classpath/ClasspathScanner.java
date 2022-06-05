@@ -7,9 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLDecoder;
+import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,7 +23,7 @@ import java.util.zip.ZipEntry;
 @RequiredArgsConstructor(staticName = "of")
 public class ClasspathScanner {
 
-    private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("okaeri.platform.debug", "false"));
+    private static final boolean TRACE = Boolean.parseBoolean(System.getProperty("okaeri.platform.trace", "false"));
     private static final Logger LOGGER = Logger.getLogger(ClasspathScanner.class.getSimpleName());
 
     private final Map<Path, List<String>> jarCache = new CacheMap<>(32);
@@ -70,15 +68,21 @@ public class ClasspathScanner {
         }
 
         String protocol = packageURL.getProtocol();
-        if (DEBUG) {
-            LOGGER.info("Scanning path '" + packagePath + "' (protocol: " + protocol + ")");
+        if (TRACE) {
+            LOGGER.info("Scanning '" + packagePath + "' '" + packageURL + "' (protocol: " + protocol + ")");
         }
 
         if ("jar".equals(protocol)) {
 
-            List<ClasspathResource> resources = new ArrayList<>();
-            String fileName = URLDecoder.decode(packageURL.getFile(), "UTF-8");
-            Path jarPath = Paths.get(new URI(fileName.substring(0, fileName.indexOf("!"))));
+            String fileName = packageURL.getFile();
+            String pathString = fileName.substring(0, fileName.indexOf("!"));
+            Path jarPath;
+
+            try {
+                jarPath = Paths.get(new URI(pathString));
+            } catch (Exception exception) {
+                throw new ClasspathScannerException("Failed to jar path from '" + pathString + "'", exception);
+            }
 
             List<String> jarEntries = this.jarCache.computeIfAbsent(jarPath, path -> {
                 try {
@@ -92,6 +96,10 @@ public class ClasspathScanner {
                     throw new RuntimeException("Failed to read jar", exception);
                 }
             });
+
+            if (TRACE) {
+                LOGGER.info("Resolved jar path to '" + jarPath + "' and found " + jarEntries.size() + " entries");
+            }
 
             return jarEntries.stream()
                 .filter(name -> name.startsWith(packagePath + "/"))
