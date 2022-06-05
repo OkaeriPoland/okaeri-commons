@@ -16,6 +16,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -23,6 +24,9 @@ import java.util.zip.ZipEntry;
 
 @RequiredArgsConstructor(staticName = "of")
 public class ClasspathScanner {
+
+    private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("okaeri.platform.debug", "false"));
+    private static final Logger LOGGER = Logger.getLogger(ClasspathScanner.class.getSimpleName());
 
     private final Map<Path, List<String>> jarCache = new CacheMap<>(32);
     private final ClassLoader classLoader;
@@ -54,13 +58,23 @@ public class ClasspathScanner {
     public Stream<ClasspathResource> findResources(@NonNull String packageName) {
 
         String packagePath = packageName.replace(".", "/");
-        URL packageURL = this.classLoader.getResource(packagePath);
+        URL packageURL;
+        try {
+            packageURL = this.classLoader.getResource(packagePath);
+        } catch (Exception exception) {
+            throw new ClasspathScannerException("Failed ClassLoader#getResources(String) with '" + packagePath + "'", exception);
+        }
 
         if (packageURL == null) {
             return Stream.of();
         }
 
-        if ("jar".equals(packageURL.getProtocol())) {
+        String protocol = packageURL.getProtocol();
+        if (DEBUG) {
+            LOGGER.info("Scanning path '" + packagePath + "' (protocol: " + protocol + ")");
+        }
+
+        if ("jar".equals(protocol)) {
 
             List<ClasspathResource> resources = new ArrayList<>();
             String fileName = URLDecoder.decode(packageURL.getFile(), "UTF-8");
@@ -87,14 +101,14 @@ public class ClasspathScanner {
                 .map(name -> this.resourceFromName(packageName, name));
         }
 
-        if ("file".equals(packageURL.getProtocol())) {
+        if ("file".equals(protocol)) {
             return Files.list(Paths.get(packageURL.toURI()))
                 .map(Path::getFileName)
                 .map(Path::toString)
                 .map(name -> this.resourceFromName(packageName, name));
         }
 
-        throw new IllegalArgumentException("Unknown protocol: " + packageURL.getProtocol());
+        throw new IllegalArgumentException("Unknown protocol: " + protocol);
     }
 
     private ClasspathResource resourceFromName(String packageName, String name) {
