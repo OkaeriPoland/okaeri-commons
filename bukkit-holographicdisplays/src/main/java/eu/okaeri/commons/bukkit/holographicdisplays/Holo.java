@@ -18,6 +18,7 @@ import org.bukkit.plugin.Plugin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -109,10 +110,20 @@ public class Holo {
     }
 
     // visibility
+    public Holo visibilityDefault(boolean visible) {
+
+        if (this.hologram == null) {
+            throw new IllegalStateException("Visibility change before #update() or race condition (try using #update with callback argument)");
+        }
+
+        this.hologram.getVisibilityManager().setVisibleByDefault(visible);
+        return this;
+    }
+
     public Holo visibilityUpdate(@NonNull Function<Player, Boolean> function) {
 
         if (this.hologram == null) {
-            return this;
+            throw new IllegalStateException("Visibility change before #update() or race condition (try using #update with callback argument)");
         }
 
         VisibilityManager visibilityManager = this.hologram.getVisibilityManager();
@@ -128,7 +139,7 @@ public class Holo {
         return this;
     }
 
-    public Holo visibilityUpdateByOwner(@NonNull Player owner, boolean hideToOwner) {
+    public Holo visibilityBy(@NonNull Player owner, boolean hideToOwner) {
         UUID uniqueId = owner.getUniqueId();
         return this.visibilityUpdate(player -> {
             // owner self visibility
@@ -140,22 +151,23 @@ public class Holo {
         });
     }
 
-    public Holo visibilityUpdateOnlyOwner(@NonNull Player owner) {
-        UUID uniqueId = owner.getUniqueId();
-        return this.visibilityUpdate(player -> player.getUniqueId().equals(uniqueId));
+    public Holo visibilityBy(@NonNull Player owner) {
+        return this.visibilityBy(owner, false);
     }
 
     public Holo visibilityHideTo(@NonNull Player player) {
-        if (this.hologram != null) {
-            this.hologram.getVisibilityManager().hideTo(player);
+        if (this.hologram == null) {
+            throw new IllegalStateException("Visibility change before #update() or race condition (try using #update with callback argument)");
         }
+        this.hologram.getVisibilityManager().hideTo(player);
         return this;
     }
 
     public Holo visibilityShowTo(@NonNull Player player) {
-        if (this.hologram != null) {
-            this.hologram.getVisibilityManager().showTo(player);
+        if (this.hologram == null) {
+            throw new IllegalStateException("Visibility change before #update() or race condition (try using #update with callback argument)");
         }
+        this.hologram.getVisibilityManager().showTo(player);
         return this;
     }
 
@@ -165,14 +177,24 @@ public class Holo {
         return this;
     }
 
-    public Holo update() {
+    public Holo update(@NonNull Consumer<Holo> callback) {
 
         if (Bukkit.isPrimaryThread()) {
-            return this.updateUnsafe();
+            this.updateUnsafe();
+            callback.accept(this);
+            return this;
         }
 
-        Bukkit.getScheduler().runTask(this.plugin, this::updateUnsafe);
+        Bukkit.getScheduler().runTask(this.plugin, () -> this.update(callback));
         return this;
+    }
+
+    public Holo update() {
+        return this.update(Function.identity()::apply);
+    }
+
+    public Holo update(@NonNull Runnable callback) {
+        return this.update(holo -> callback.run());
     }
 
     protected Holo updateUnsafe() {
