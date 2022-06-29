@@ -43,8 +43,8 @@ public interface IndexedSet<VT, KT> extends Set<VT> {
     /**
      * Returns a builder for the {@link IndexedLinkedHashSet}.
      *
-     * @param valueType the class matching the @{code <VT>}
-     * @param keyType   the class matching the @{code <KT>}
+     * @param valueType the class matching the VT
+     * @param keyType   the class matching the KT
      * @param <VT>      the type of the set values (map value)
      * @param <KT>      the type of the set index (map key)
      * @return an uninitialized {@link IndexedSetBuilder}
