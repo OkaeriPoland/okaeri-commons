@@ -265,7 +265,14 @@ public class Holo {
     }
 
     public Holo delete() {
-        this.hologram.delete();
+
+        if (Bukkit.isPrimaryThread()) {
+            this.hologram.delete();
+        } else {
+            Hologram targetHologram = this.hologram;
+            Bukkit.getScheduler().runTask(this.plugin, targetHologram::delete);
+        }
+
         this.hologram = null;
         return this;
     }
