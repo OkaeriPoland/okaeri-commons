@@ -74,6 +74,7 @@ public class ClasspathScanner {
 
         if ("jar".equals(protocol)) {
 
+            // FIXME: possible less obscure way? https://stackoverflow.com/a/48298758
             String fileName = packageURL.getFile();
             String pathString = fileName.substring(0, fileName.indexOf("!"));
             Path jarPath;
@@ -116,7 +117,7 @@ public class ClasspathScanner {
                 .map(name -> this.resourceFromName(packageName, name));
         }
 
-        throw new IllegalArgumentException("Unknown protocol: " + protocol);
+        throw new IllegalArgumentException("Unknown protocol (" + protocol + "): " + packageURL);
     }
 
     private ClasspathResource resourceFromName(String packageName, String name) {
