@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 @EqualsAndHashCode(callSuper = false)
 public class Cached<T> extends Lazy<T> {
 
-    @Getter @Setter private Duration ttl;
+    private @Getter @Setter Duration ttl;
 
     protected Cached(Duration ttl, @NonNull Supplier<T> supplier) {
         super(supplier);
