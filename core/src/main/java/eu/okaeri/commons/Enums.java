@@ -29,7 +29,7 @@ public final class Enums {
         return matchIgnoreCase(type, name, null);
     }
 
-    public <E extends Enum<E>> Optional<E> match(@NonNull Class<E> type, @NonNull String name, E fallback) {
+    public static <E extends Enum<E>> Optional<E> match(@NonNull Class<E> type, @NonNull String name, E fallback) {
         try {
             return Optional.of(Enum.valueOf(type, name));
         } catch (IllegalArgumentException exception) {
@@ -37,11 +37,11 @@ public final class Enums {
         }
     }
 
-    public <E extends Enum<E>> Optional<E> match(@NonNull Class<E> type, @NonNull String name) {
-        return this.match(type, name, null);
+    public static <E extends Enum<E>> Optional<E> match(@NonNull Class<E> type, @NonNull String name) {
+        return match(type, name, null);
     }
 
-    public <E extends Enum<E>> boolean isValid(@NonNull Class<E> type, @NonNull String name) {
-        return this.match(type, name).isPresent();
+    public static <E extends Enum<E>> boolean isValid(@NonNull Class<E> type, @NonNull String name) {
+        return match(type, name).isPresent();
     }
 }
