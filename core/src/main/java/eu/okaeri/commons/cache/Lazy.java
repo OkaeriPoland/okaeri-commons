@@ -1,13 +1,12 @@
 package eu.okaeri.commons.cache;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import java.time.Instant;
 import java.util.function.Supplier;
 
+@ToString
+@EqualsAndHashCode
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class Lazy<T> implements Supplier<T>, Runnable {
 
