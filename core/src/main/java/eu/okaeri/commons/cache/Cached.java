@@ -7,7 +7,7 @@ import java.time.Instant;
 import java.util.function.Supplier;
 
 @ToString
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public class Cached<T> extends Lazy<T> {
 
     private @Getter @Setter Duration ttl;
