@@ -25,35 +25,44 @@ public class Cached<T> extends Lazy<T> {
         return new Cached<>(ttl, supplier);
     }
 
-    @Override
-    public T get() {
-
-        if (this.getLastUpdated() == null) {
-            return super.get();
-        }
-
-        if (this.getTtl() == null) {
-            return this.getValue();
-        }
-
-        Duration timeLived = Duration.between(this.getLastUpdated(), Instant.now());
-        if (timeLived.compareTo(this.getTtl()) > 0) {
-            return this.update();
-        }
-
-        return this.getValue();
+    protected boolean isEmptyOrExpired() {
+        return (this.getLastUpdated() == null) || ((this.getTtl() != null) && (Duration.between(this.getLastUpdated(), Instant.now()).compareTo(this.getTtl()) > 0));
     }
 
+    /**
+     * Gets the current cache value. In case there is no value present or the ttl expired,
+     * the provided {@link #supplier} is used to update the current cache value before returning.
+     *
+     * @return Current cached value
+     */
+    @Override
+    public T get() {
+        return this.isEmptyOrExpired() ? this.update() : this.getValue();
+    }
+
+    /**
+     * Force updates the cached value.
+     *
+     * @return Updated cached value
+     */
     public T update() {
         this.value = this.resolve();
         this.lastUpdated = Instant.now();
         return this.getValue();
     }
 
+    /**
+     * Gets the supplier value without updating the cached value.
+     *
+     * @return Supplier returned value
+     */
     public T resolve() {
         return this.supplier.get();
     }
 
+    /**
+     * Void-returning {@link #update()} for use as a scheduled update task.
+     */
     @Override
     public void run() {
         this.update();

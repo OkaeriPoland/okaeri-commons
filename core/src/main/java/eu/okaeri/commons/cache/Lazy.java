@@ -18,6 +18,12 @@ public class Lazy<T> implements Supplier<T>, Runnable {
         return new Lazy<>(supplier);
     }
 
+    /**
+     * Gets the lazy value. In case there is no value present, the provided
+     * {@link #supplier} is used to update the lazy value before returning.
+     *
+     * @return Current cached value
+     */
     @Override
     public T get() {
         if (this.lastUpdated == null) {
@@ -27,6 +33,9 @@ public class Lazy<T> implements Supplier<T>, Runnable {
         return this.value;
     }
 
+    /**
+     * Void-returning {@link #get()} for use as a scheduled task.
+     */
     @Override
     public void run() {
         this.get();
