@@ -5,6 +5,9 @@ import lombok.*;
 import java.time.Instant;
 import java.util.function.Supplier;
 
+/**
+ * Trivial and thread-safe Lazy wrapper.
+ */
 @ToString
 @EqualsAndHashCode
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,6 +28,7 @@ public class Lazy<T> implements Supplier<T>, Runnable {
      * @return Current cached value
      */
     @Override
+    @Synchronized
     public T get() {
         if (this.lastUpdated == null) {
             this.value = this.supplier.get();
