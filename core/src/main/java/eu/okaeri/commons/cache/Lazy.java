@@ -15,7 +15,7 @@ public class Lazy<T> implements Supplier<T>, Runnable {
 
     protected @NonNull Supplier<T> supplier;
     protected @Getter Instant lastUpdated;
-    protected @Getter T value;
+    protected volatile @Getter T value;
 
     public static <A> Lazy<A> of(@NonNull Supplier<A> supplier) {
         return new Lazy<>(supplier);

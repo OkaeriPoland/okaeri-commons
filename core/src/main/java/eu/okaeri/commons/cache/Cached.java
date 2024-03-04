@@ -4,12 +4,18 @@ import lombok.*;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
+/**
+ * Trivial and thread-safe Cached wrapper.
+ */
 @ToString
 @EqualsAndHashCode(callSuper = true)
 public class Cached<T> extends Lazy<T> {
 
+    private final Lock writeLock = new ReentrantLock();
     private @Getter @Setter Duration ttl;
 
     protected Cached(Duration ttl, @NonNull Supplier<T> supplier) {
@@ -37,7 +43,22 @@ public class Cached<T> extends Lazy<T> {
      */
     @Override
     public T get() {
-        return this.isEmptyOrExpired() ? this.update() : this.getValue();
+        if (!this.isEmptyOrExpired()) {
+            return this.getValue();
+        }
+        if (this.writeLock.tryLock()) {
+            try {
+                return this.update();
+            } finally {
+                this.writeLock.unlock();
+            }
+        }
+        try {
+            this.writeLock.lock();
+            return this.get();
+        } finally {
+            this.writeLock.unlock();
+        }
     }
 
     /**
