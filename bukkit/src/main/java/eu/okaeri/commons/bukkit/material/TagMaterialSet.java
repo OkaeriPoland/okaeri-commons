@@ -113,7 +113,26 @@ public class TagMaterialSet implements Set<Material> {
 
     @Override
     public boolean addAll(@NotNull Collection<? extends Material> collection) {
-        throw new UnsupportedOperationException();
+        boolean changed = false;
+        for (Object element : collection) {
+            if (element instanceof Material) {
+                this.materials.add((Material) element);
+                changed = true;
+            } else if (element instanceof Tag) { // some trolling going on??
+                this.tags.add((Tag) element);
+                changed = true;
+            } else {
+                if (element == null) {
+                    throw new IllegalArgumentException("Null values not allowed");
+                }
+                throw new IllegalArgumentException("Unsupported type of collection element: " + element.getClass());
+            }
+        }
+        if (changed) {
+            this.$computed = null; // ensure mutation consistency
+            return true;
+        }
+        return false;
     }
 
     @Override
