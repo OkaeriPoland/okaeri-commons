@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 public class Lazy<T> implements Supplier<T>, Runnable {
 
     protected @NonNull Supplier<T> supplier;
-    protected @Getter Instant lastUpdated;
+    protected volatile @Getter Instant lastUpdated;
     protected volatile @Getter T value;
 
     public static <A> Lazy<A> of(@NonNull Supplier<A> supplier) {
@@ -28,13 +28,17 @@ public class Lazy<T> implements Supplier<T>, Runnable {
      * @return Current cached value
      */
     @Override
-    @Synchronized
     public T get() {
-        if (this.lastUpdated == null) {
+        return (this.getLastUpdated() == null) ? this.get0() : this.getValue();
+    }
+
+    @Synchronized
+    protected T get0() {
+        if (this.getLastUpdated() == null) {
             this.value = this.supplier.get();
             this.lastUpdated = Instant.now();
         }
-        return this.value;
+        return this.getValue();
     }
 
     /**
