@@ -23,21 +23,37 @@ public final class UnsafeBukkitCommons {
     // NMS / REFLECTIONS
     //
     @Getter private static String nmsVersion;
+    @Getter private static String cbPackage;
     private static boolean legacy18o17;
     private static MethodHandles.Lookup lookup = MethodHandles.lookup();
 
     static {
-        nmsVersion = Bukkit.getServer().getClass().getPackage().getName();
+        cbPackage = Bukkit.getServer().getClass().getPackage().getName();
+        legacy18o17 = (cbPackage.endsWith("v1_8_R1") || cbPackage.contains("v1_7_"));
+
         nmsVersion = nmsVersion.substring(nmsVersion.lastIndexOf(".") + 1);
-        legacy18o17 = ("v1_8_R1".equalsIgnoreCase(nmsVersion) || nmsVersion.startsWith("v1_7_"));
+        if (!nmsVersion.contains("_")) nmsVersion = null; // non-versioned package
     }
 
-    public static Class<?> getNmsClass(@NonNull String pattern) {
+    public static Class<?> getClass(@NonNull String name) {
         try {
-            return Class.forName(pattern.replace("{nms}", getNmsVersion()));
+            return Class.forName(name);
         } catch (ClassNotFoundException ignored) {
             return null;
         }
+    }
+
+    public static Class<?> getCbClass(@NonNull String suffix) {
+        return getClass(getCbPackage() + "." + suffix);
+    }
+
+    public static Class<?> getNmsClass(@NonNull String suffix) {
+        Class<?> clazz;
+        clazz = getClass("net.minecraft.server." + suffix);
+        if (clazz == null) {
+            clazz = getClass("net.minecraft.server." + getNmsVersion() + "." + suffix);
+        }
+        return clazz;
     }
 
     public static MethodHandle getMHFrom(Class<?> clazz, @NonNull String name, @NonNull Class<?>... params) {
@@ -85,22 +101,22 @@ public final class UnsafeBukkitCommons {
         }
     }
 
-    private static Class<?> CraftPlayer = getNmsClass("org.bukkit.craftbukkit.{nms}.entity.CraftPlayer");
-    private static Class<?> EntityPlayer = getNmsClass("net.minecraft.server.{nms}.EntityPlayer");
-    private static Class<?> PlayerConnection = getNmsClass("net.minecraft.server.{nms}.PlayerConnection");
-    private static Class<?> PacketPlayOutChat = getNmsClass("net.minecraft.server.{nms}.PacketPlayOutChat");
-    private static Class<?> Packet = getNmsClass("net.minecraft.server.{nms}.Packet");
-    private static Class<?> IChatBaseComponent = getNmsClass("net.minecraft.server.{nms}.IChatBaseComponent");
-    private static Class<?> ChatComponentText = getNmsClass("net.minecraft.server.{nms}.ChatComponentText");
-    private static Class<?> ChatSerializer = getNmsClass("net.minecraft.server.{nms}.ChatSerializer");
-    private static Class<?> BCTextComponent = getNmsClass("net.md_5.bungee.api.chat.TextComponent");
-    private static Class<?> BCChatMessageType = getNmsClass("net.md_5.bungee.api.ChatMessageType");
-    private static Class<?> BCBaseComponentArray = getNmsClass("[Lnet.md_5.bungee.api.chat.BaseComponent;");
-    private static Class<?> BCBaseComponent = getNmsClass("net.md_5.bungee.api.chat.BaseComponent");
-    private static Class<?> PlayerSpigot = getNmsClass("org.bukkit.entity.Player$Spigot");
-    private static Class<?> CommandSenderSpigot = getNmsClass("org.bukkit.command.CommandSender$Spigot");
-    private static Class<?> MinecraftServer = getNmsClass("net.minecraft.server.{nms}.MinecraftServer");
-    private static Class<?> CraftServer = getNmsClass("org.bukkit.craftbukkit.{nms}.CraftServer");
+    private static Class<?> CraftPlayer = getCbClass("entity.CraftPlayer");
+    private static Class<?> EntityPlayer = getNmsClass("EntityPlayer");
+    private static Class<?> PlayerConnection = getNmsClass("PlayerConnection");
+    private static Class<?> PacketPlayOutChat = getNmsClass("PacketPlayOutChat");
+    private static Class<?> Packet = getNmsClass("Packet");
+    private static Class<?> IChatBaseComponent = getNmsClass("IChatBaseComponent");
+    private static Class<?> ChatComponentText = getNmsClass("ChatComponentText");
+    private static Class<?> ChatSerializer = getNmsClass("ChatSerializer");
+    private static Class<?> BCTextComponent = getClass("net.md_5.bungee.api.chat.TextComponent");
+    private static Class<?> BCChatMessageType = getClass("net.md_5.bungee.api.ChatMessageType");
+    private static Class<?> BCBaseComponentArray = getClass("[Lnet.md_5.bungee.api.chat.BaseComponent;");
+    private static Class<?> BCBaseComponent = getClass("net.md_5.bungee.api.chat.BaseComponent");
+    private static Class<?> PlayerSpigot = getClass("org.bukkit.entity.Player$Spigot");
+    private static Class<?> CommandSenderSpigot = getClass("org.bukkit.command.CommandSender$Spigot");
+    private static Class<?> MinecraftServer = getNmsClass("MinecraftServer");
+    private static Class<?> CraftServer = getCbClass("CraftServer");
 
     private static MethodHandle CraftPlayerGetHandle = getMHFrom(CraftPlayer, "getHandle");
     private static MethodHandle ItemMetaSetUnbreakable = getMHFrom(ItemMeta.class, "setUnbreakable", boolean.class);
