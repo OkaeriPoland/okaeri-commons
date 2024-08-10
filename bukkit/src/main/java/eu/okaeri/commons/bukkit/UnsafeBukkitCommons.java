@@ -31,7 +31,7 @@ public final class UnsafeBukkitCommons {
         cbPackage = Bukkit.getServer().getClass().getPackage().getName();
         legacy18o17 = (cbPackage.endsWith("v1_8_R1") || cbPackage.contains("v1_7_"));
 
-        nmsVersion = nmsVersion.substring(nmsVersion.lastIndexOf(".") + 1);
+        nmsVersion = cbPackage.substring(cbPackage.lastIndexOf(".") + 1);
         if (!nmsVersion.contains("_")) nmsVersion = null; // non-versioned package
     }
 
