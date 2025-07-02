@@ -9,7 +9,7 @@ import java.util.*;
 
 /**
  * CommandRunner runner = CommandRunner.of(Bukkit.getOnlinePlayers())
- *   .field("{name}", (target) -> target.getName())
+ *   .field("{name}", (target) -&gt; target.getName())
  *   .execute("say {name}");
  */
 public class CommandRunner<T> {
