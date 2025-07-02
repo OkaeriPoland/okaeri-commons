@@ -42,6 +42,8 @@ public class FloatRange {
      */
     public static final FloatRange EMPTY = new FloatRange(0, 0);
 
+    private static final float EPSILON = 1e-6f;
+
     private final float min;
     private final float max;
 
@@ -70,6 +72,7 @@ public class FloatRange {
      * @return random value in range.
      */
     public float getRandom() {
+        if ((this.min == this.max) || (Math.abs(this.min - this.max) < EPSILON)) return this.min;
         return RandomNumbers.nextFloat(this.min, this.max);
     }
 
@@ -80,6 +83,7 @@ public class FloatRange {
      * @return random value in range.
      */
     public float getRandom(Random random) {
+        if ((this.min == this.max) || (Math.abs(this.min - this.max) < EPSILON)) return this.min;
         return RandomNumbers.nextFloat(random, this.min, this.max);
     }
 

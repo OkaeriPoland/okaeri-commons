@@ -42,6 +42,8 @@ public class DoubleRange {
      */
     public static final DoubleRange EMPTY = new DoubleRange(0, 0);
 
+    private static final double EPSILON = 1e-9;
+
     private final double min;
     private final double max;
 
@@ -49,6 +51,7 @@ public class DoubleRange {
      * @return random value in range.
      */
     public double getRandom() {
+        if ((this.min == this.max) || (Math.abs(this.min - this.max) < EPSILON)) return this.min;
         return RandomNumbers.nextDouble(this.min, this.max);
     }
 
@@ -59,6 +62,7 @@ public class DoubleRange {
      * @return random value in range.
      */
     public double getRandom(Random random) {
+        if ((this.min == this.max) || (Math.abs(this.min - this.max) < EPSILON)) return this.min;
         return RandomNumbers.nextDouble(random, this.min, this.max);
     }
 
